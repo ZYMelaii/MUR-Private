@@ -18,6 +18,12 @@ struct CPoint : public POINT {
 	CPoint operator-(const CPoint &rhs) const {
 		return { x - rhs.x, y - rhs.y };
 	}
+	bool operator==(const CPoint &rhs) const {
+		return x == rhs.x && y == rhs.y;
+	}
+	bool operator!=(const CPoint &rhs) const {
+		return x != rhs.x || y != rhs.y;
+	}
 };
 
 #endif /*POINT_H*/

@@ -32,7 +32,7 @@ typedef struct tagFishAction
                             /// display=其他值;正在执行Point2PointClose函数，表其中的各个区域。
                             /// display=20;正在执行Point2PointNear函数。
                             /// display=30;正在执行Point2PointFar函数。
-    BYTE mode;              /// 模态，0为通用转弯方式；1为原始转弯方式（转一下立刻回来）
+    uint8_t mode;           /// 模态，0为通用转弯方式；1为原始转弯方式（转一下立刻回来）
 } FISHACTION;
 
 /**
@@ -45,7 +45,7 @@ typedef struct tagBallInfo
     double v_ball;           /// 水球速度，单位cm/s 
     double v_direction;      /// 水球方向，单位弧度-PI~PI 
     float  radius;           /// 水球半径
-    BYTE   time;	         /// 水球识别时间间隔
+    uint8_t   time;	         /// 水球识别时间间隔
 } BALLINFO;
 
 /**
@@ -92,10 +92,10 @@ typedef struct tagObstaInfo {
  */
 typedef struct tagImgProcessSet
 {
-    BOOL bDistort;          /// 图像失真处理标志
-    BOOL bSubstrate;        /// 图像饱和度衬底处理标志
-    BOOL bLighten;          /// 图像亮度处理标志
-    BOOL bSmoothing;        /// 图像平滑处理标志
+    bool bDistort;          /// 图像失真处理标志
+    bool bSubstrate;        /// 图像饱和度衬底处理标志
+    bool bLighten;          /// 图像亮度处理标志
+    bool bSmoothing;        /// 图像平滑处理标志
 } IMGPROCESSSET;
 
 /**
@@ -120,19 +120,19 @@ typedef struct tagImgDisplayPara
  */
 typedef struct tagInfoDisplay
 {
-    BOOL bDisplayFishpos;           /// 显示鱼的位置
-    BOOL bDisplayFishspeed;         /// 显示鱼的速度
-    BOOL bDisplayFishspeeddir;      /// 显示鱼的速度方向
-    BOOL bDisplayFishdir;           /// 显示鱼的运动方向
-    BOOL bDisplayCommandsent;       /// 显示发送的命令
-    BOOL bDisplayCommandrec;        /// 显示反馈的命令
-    BOOL bDisplayNormal;            /// 显示当前状态是否正常
-    BOOL bDisplayBallpos;           /// 显示水球的位置
-    BOOL bDisplayBallspeed;         /// 显示水球的速度
-    BOOL bDisplayBallspeeddir;      /// 显示水球的速度方向
-    BOOL bDisplayObstapos;          /// 显示障碍物的位置
-    BOOL bDisplayObstaspeed;        /// 显示障碍物的速度
-    BOOL bDisplayObstaspeeddir;     /// 显示障碍物的速度方向
+    bool bDisplayFishpos;           /// 显示鱼的位置
+    bool bDisplayFishspeed;         /// 显示鱼的速度
+    bool bDisplayFishspeeddir;      /// 显示鱼的速度方向
+    bool bDisplayFishdir;           /// 显示鱼的运动方向
+    bool bDisplayCommandsent;       /// 显示发送的命令
+    bool bDisplayCommandrec;        /// 显示反馈的命令
+    bool bDisplayNormal;            /// 显示当前状态是否正常
+    bool bDisplayBallpos;           /// 显示水球的位置
+    bool bDisplayBallspeed;         /// 显示水球的速度
+    bool bDisplayBallspeeddir;      /// 显示水球的速度方向
+    bool bDisplayObstapos;          /// 显示障碍物的位置
+    bool bDisplayObstaspeed;        /// 显示障碍物的速度
+    bool bDisplayObstaspeeddir;     /// 显示障碍物的速度方向
 } INFODISPLAY;
 
 /**
@@ -140,19 +140,19 @@ typedef struct tagInfoDisplay
  */
 typedef struct tagInfoSave
 {
-    BOOL bSaveFishpos;              /// 保存鱼的位置
-    BOOL bSaveFishspeed;            /// 保存鱼的速度
-    BOOL bSaveFishspeeddir;         /// 保存鱼的速度方向
-    BOOL bSaveFishdir;              /// 保存鱼的运动方向
-    BOOL bSaveCommandsent;          /// 保存发送的命令
-    BOOL bSaveCommandrec;           /// 保存反馈的命令
-    BOOL bSaveNormal;               /// 保存当前状态是否正常
-    BOOL bSaveBallpos;              /// 保存水球的位置
-    BOOL bSaveBallspeed;            /// 保存水球的速度
-    BOOL bSaveBallspeeddir;         /// 保存水球的速度方向
-    BOOL bSaveObstapos;             /// 保存障碍物的位置
-    BOOL bSaveObstaspeed;           /// 保存障碍物的速度
-    BOOL bSaveObstaspeeddir;        /// 保存障碍物的速度方向
+    bool bSaveFishpos;              /// 保存鱼的位置
+    bool bSaveFishspeed;            /// 保存鱼的速度
+    bool bSaveFishspeeddir;         /// 保存鱼的速度方向
+    bool bSaveFishdir;              /// 保存鱼的运动方向
+    bool bSaveCommandsent;          /// 保存发送的命令
+    bool bSaveCommandrec;           /// 保存反馈的命令
+    bool bSaveNormal;               /// 保存当前状态是否正常
+    bool bSaveBallpos;              /// 保存水球的位置
+    bool bSaveBallspeed;            /// 保存水球的速度
+    bool bSaveBallspeeddir;         /// 保存水球的速度方向
+    bool bSaveObstapos;             /// 保存障碍物的位置
+    bool bSaveObstaspeed;           /// 保存障碍物的速度
+    bool bSaveObstaspeeddir;        /// 保存障碍物的速度方向
 } INFOSAVE;
 
 /**

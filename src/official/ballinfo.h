@@ -13,7 +13,8 @@
  * @date:          14-04-04 16:55
  */
 
-#pragma once
+#ifndef MUR_BALLINFO_H
+#define MUR_BALLINFO_H
 
 #include "../official/struct.h"
 
@@ -96,3 +97,5 @@ public:
      */
     CBallInfo& operator=(const BALLINFO &other);
 };
+
+#endif /*MUR_BALLINFO_H*/
