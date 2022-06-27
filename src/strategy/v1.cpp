@@ -53,6 +53,11 @@ int Q = 0, W = 0, E = 0;
 
 /**
  * @note 功能未知的函数（主要是一坨flag的意义不清楚）
+ * @note 函数中的mode跟其他地方出现的mode屁的关系都没有，
+ *  它的含义就是用来表明应该把哪些标志置零，但是问题是这些
+ *  flag的意义我是一个都不知道。
+ * @author zymelaii
+ * @date 2022-06-27
  */
 void deletezero(int mode) {
     switch (mode) {

@@ -2,3 +2,4 @@ file(GLOB_RECURSE SOURCE_FILES . *.cpp)
 file(GLOB_RECURSE HEADER_FILES . *.h)
 
 add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES})
+target_link_options(${PROJECT_NAME} PRIVATE -static)
