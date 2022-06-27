@@ -21,14 +21,29 @@
 #include "../official/ballinfo.h"
 #include "../official/fishaction.h"
 #include "../official/fishinfo.h"
+#include "../official/strategy.h"
 
-#define ExportMURStrategy(OriginImage, RecogImage, action, fishinfo, ballinfo, obstacle, channel) \
+#define BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel) \
 STRATEGY_API BOOL MURStrategy( \
 	IplImage *OriginImage, IplImage *RecogImage, \
-	CFishAction *action, int n_##action, \
-	CFishInfo *fishinfo, int n_##fishinfo, \
-	CBallInfo *ballinfo, int n_##ballinfo, \
-	OBSTAINFO *obstacle, int n_##obstacle, \
-	CHANNEL *channel, int n_##channel)
+	CFishAction *_##aAction, int n_##aAction, \
+	CFishInfo *_##aFish, int n_##aFish, \
+	CBallInfo *_##aBallinfo, int n_##aBallinfo, \
+	OBSTAINFO *_##aObstacle, int n_##aObstacle, \
+	CHANNEL *_##aChannel, int n_##aChannel) { \
+	RefArray aAction(_##aAction, n_##aAction); \
+	RefArray aFish(_##aFish, n_##aFish); \
+	RefArray aBallinfo(_##aBallinfo, n_##aBallinfo); \
+	RefArray aObstacle(_##aObstacle, n_##aObstacle); \
+	RefArray aChannel(_##aChannel, n_##aChannel);
+
+#define EndExport() }
+
+#define ExportStategy(StategyClass) \
+	BeginExportMURStrategy(unused1, unused2, _1, _2, _3, _4, _5); \
+	static auto strategy = new StategyClass(); \
+	strategy->Strategy(_1, _2, _3, _4, _5); \
+	return true; \
+	EndExport()
 
 #endif /*MUR_STRATEGYHELPER_H*/

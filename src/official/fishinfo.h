@@ -72,10 +72,9 @@ public:
     void   CalSpeedPara(void);                     /**计算速度、角速度、速度方向*/
 
     void   SetInfo(CPoint pt,double dir,int time); /**根据最新的图像识别信息，更新设置鱼的信息，在图像识别算法中用*/
-    CPoint GetCenterPoint();                       /**返回中心点坐标*/
+    CPoint GetCenterPoint() const;                 /**返回中心点坐标*/
     CPoint GetLastCenterPoint();                   /**返回上个周期鱼中心点的位置*/
-    double GetDirection( );                        /**返回鱼头方向*/
-
+    double GetDirection() const;                   /**返回鱼头方向*/
 
     void   SetToPos(CPoint pt,double dir);         /**设置目标点坐标及到目标点后期望的方向，dir弧度*/
     CPoint GetToPoint();                           /**返回目标点坐标*/

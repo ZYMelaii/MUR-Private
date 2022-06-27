@@ -7,12 +7,17 @@
 #ifndef MATHTOOL_H
 #define MATHTOOL_H
 
-#include "common.h"
+#include "./common.h"
 #include <math.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
+/**
+ * @brief 数值溢出截断
+ */
+double clamp(double value, double min, double max);
 
 /**
  * @brief 将角度值规范至(-π,π]

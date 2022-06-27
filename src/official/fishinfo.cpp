@@ -242,7 +242,7 @@ void   CFishInfo::SetInfo(CPoint pt,double dir,int time)
 }
 
 /**返回中心点坐标*/
-CPoint CFishInfo::GetCenterPoint()
+CPoint CFishInfo::GetCenterPoint() const
 {
     return m_fCenterP;
 }
@@ -254,7 +254,7 @@ CPoint CFishInfo::GetLastCenterPoint()
 }
 
 /**返回鱼头方向*/
-double CFishInfo::GetDirection( )
+double CFishInfo::GetDirection() const
 {
     return m_fdirection;
 }

@@ -1,5 +1,15 @@
 #include "mathtools.h"
 
+double clamp(double value, double min, double max) {
+	if (value < min) {
+		return min;
+	} else if (value > max) {
+		return max;
+	} else {
+		return value;
+	}
+}
+
 double normalizeAngle(double angle, bool is_radian) {
 	const double unit = is_radian ? 2 * M_PI : 360.0;
 	if (angle < 0) {

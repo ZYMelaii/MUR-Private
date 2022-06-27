@@ -2,13 +2,13 @@
 #define COMMON_H
 
 #include <stddef.h>
-#include <assert.h>
-#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <malloc.h>
 #include <limits.h>
+#include <assert.h>
 #include <float.h>
+#include <malloc.h>
+#include <string.h>
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
