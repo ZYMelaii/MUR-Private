@@ -33,4 +33,31 @@
 #include "./official/strategyhelper.h"
 
 #include "./strategy/v1.h"
-ExportStategy(StrategyCloneV1); /// 水中协作顶球
+#include <iostream>
+
+BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
+    puts("[INFO] entry MURStrategy");
+    printf(
+        "[STATUS]\n"
+        "\tOriginImage: 0x%p\n"
+        "\tRecogImage: 0x%p\n"
+        "\taAction: size()=%d\n"
+        "\taFish: size()=%d\n"
+        "\taBallinfo: size()=%d\n"
+        "\taObstacle: size()=%d\n"
+        "\taChannel: size()=%d\n",
+        OriginImage,
+        RecogImage,
+        aAction.size(),
+        aFish.size(),
+        aBallinfo.size(),
+        aObstacle.size(),
+        aChannel.size()
+    );
+    
+    static auto *strategy = new StrategyCloneV1;
+
+    puts("[INFO] begin running StrategyCloneV1");
+    strategy->Strategy(aAction, aFish, aBallinfo, aObstacle, aChannel);
+    puts("[INFO] finished StrategyCloneV1::Strategy");
+EndExport()

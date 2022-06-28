@@ -37,7 +37,7 @@ STRATEGY_API BOOL MURStrategy( \
 	RefArray aObstacle(_##aObstacle, n_##aObstacle); \
 	RefArray aChannel(_##aChannel, n_##aChannel);
 
-#define EndExport() }
+#define EndExport() return true; }
 
 #define ExportStategy(StategyClass) \
 	BeginExportMURStrategy(unused1, unused2, _1, _2, _3, _4, _5); \
