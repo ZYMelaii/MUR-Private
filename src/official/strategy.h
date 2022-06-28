@@ -103,6 +103,7 @@ public:
 	/**
 	 * @brief 策略函数
 	 * @note 具体策略应在子类中重写
+	 * @return 策略是否成功执行
 	 * @author zymelaii
 	 * @date 2022-06-27
 	 */

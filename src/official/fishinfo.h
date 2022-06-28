@@ -12,9 +12,199 @@
 
 /**
  * @brief 机器鱼信息操作类
+ * @note 原来的代码真是一坨狗屎，即便是重构了之后也
+ *  同样存在一些算法上的问题，所以请不要过度依赖跟计
+ *  算相关的方法。
+ * @author zymelaii
+ * @date 2022-06-27
  */
 class CFishInfo {
 public:
+    /**
+     * @brief 通用无效参量
+     * @note 用于无效坐标与无效角度的赋值
+     * @note 之所以不设置为-1是因为-1是角度的有效值
+     */
+    static constexpr int nil = -16;
+
+    /**
+     * @brief 默认构造
+     * @note 此时鱼的信息为无效量
+     */
+    CFishInfo();
+
+    /**
+     * @brief 鱼的编号
+     */
+    int& fishId();
+    const int& fishId() const;
+
+    /**
+     * @brief 鱼所属的队伍编号
+     */
+    int& teamId();
+    const int& teamId() const;
+
+    /**
+     * @brief 鱼所属的队伍名称
+     */
+    const char* teamName();
+    const char* const teamName() const;
+
+    /**
+     * @brief 当前鱼中心坐标
+     */
+    CPoint centerPos() const;
+
+    /**
+     * @brief 上一次采样时鱼的中心坐标
+     */
+    CPoint lastCenterPos() const;
+
+    /**
+     * @brief 鱼头（尖端）坐标
+     */
+    CPoint headerPos() const;
+
+    /**
+     * @brief 带参获取鱼头相关位置坐标
+     * @param radius 偏移距离
+     * @param direction 偏移位置与水平面的偏转角（单位为弧度）
+     * @note 使用该函数前务必确保鱼头坐标已被更新！
+     * @return 返回距离鱼头radius距离，偏角为direction位置的坐标
+     */
+    CPoint getHeaderPosAdvance(double radius, double direction);
+
+    /**
+     * @brief 第一关节转动轴坐标
+     */
+    CPoint jointPos() const;
+
+    /**
+     * @brief 当前鱼的偏转角（弧度制）
+     */
+    double currentDirection() const;
+
+    /**
+     * @brief 上一次采样时鱼的偏转角（弧度制）
+     */
+    double lastDirection() const;
+
+    /**
+     * @brief 速度
+     */
+    double velocity() const;
+
+    /**
+     * @brief 速度方向
+     */
+    double velocityDirection() const;
+    
+    /**
+     * @brief 角速度
+     */
+    double angularVelocity() const;
+
+    /**
+     * @brief 当前鱼执行的动作
+     */
+    const CFishAction& currentAction() const;
+
+    /**
+     * @brief 判断当前是否设定目标点
+     */
+    bool hasTarget() const;
+
+    /**
+     * @brief 当前目标点坐标
+     */
+    CPoint targetPos() const;
+
+    /**
+     * @brief 设置新的目标点
+     * @param pos 目标点坐标
+     * @param direction 期望达到目标点后鱼的方位角（弧度制）
+     * @return 返回当前对象
+     */
+    CFishInfo& setTarget(const CPoint &pos, double direction);
+
+    /**
+     * @brief 鱼中心到目标点的方向角
+     * @param correct 是否启用过冲修正
+     * @return 返回弧度制方向角，若目标点不存在或距离过近则返回nil
+     * @note 代码逻辑较为奇怪，慎用！
+     */
+    double directionToTarget(bool correct = false) const;
+
+    /**
+     * @brief 计算目标点的插值坐标并重规划动作
+     * @param action 待重规划的动作
+     * @param apply 是否将插值规划应用至action
+     * @return 插值计算是否成功，目标点不存在或距离过近时返回假
+     * @note 以中心、鱼头、鱼头与目标点的中点、目标点为基计算到达
+     *  目标点的插值坐标。
+     * @note 仅完成对原作者代码的重写，工作稳定与否不知道，慎用！
+     * @note 更多吐槽见源代码文件
+     * @author zymelaii
+     * @date 2022-06-28
+     */
+    bool calcInterPos(CFishAction& action, bool apply = true);
+
+    /**
+     * @brief 插值坐标
+     * @note 请结合calcInterPos(CFishAction&, bool)的返回值判断
+     *  是否应该使用插值点
+     */
+    CPoint interPos() const;
+
+    /**
+     * @brief 获取上一次鱼执行的动作
+     * @param action 若获取成功，则上一次动作写入action
+     * @note 若上一次动作不存在，则获取失败
+     * @return 为真则获取成功写入action，否则不改变action的值
+     */
+    bool getLastAction(CFishAction& action) const;
+
+    /**
+     * @brief 设置鱼的新动作
+     * @return 返回当前对象
+     */
+    CFishInfo& updateAction(const CFishAction &action);
+
+    /**
+     * @brief 更新信息
+     * @note 该函数疑似底层接口，此处保留原函数形式以便回滚：
+     *  void SetInfo(CPoint recogPos, double direction, int time)
+     * @param pos 全局视觉识别到的鱼中心的坐标/期望更新的鱼的坐标
+     * @param direction 鱼的方位角（弧度制）
+     * @param duration 设定采样与当前状态的时间间隔（单位为时间步长TIMESTAMP）
+     * @return 返回当前对象
+     */
+    CFishInfo& update(CPoint pos, double direction, uint8_t duration);
+
+protected:
+    /**
+     * @brief 更新鱼头坐标
+     * @note 由update(CPoint,double,uint8_t)方法统一更新
+     * @author zymelaii
+     */
+    void updateHeaderPos();
+
+    /**
+     * @brief 更新第一关节转动轴坐标
+     * @note 由update(CPoint,double,uint8_t)方法统一更新
+     * @author zymelaii
+     */
+    void updateJointPos();
+
+    /**
+     * @brief 更新所有速度量（速度、角速度、速度方向）
+     * @note 由update(CPoint, double, uint8_t)方法统一更新
+     * @author zymelaii
+     */
+    void updateVelocities();
+
+protected:
     CFishAction m_fCurrentAction;   /// 当前执行动作
     CFishAction m_fLastAction;      /// 上一次动作
     CPoint m_fTargetPos,            /// 目标点坐标
@@ -24,69 +214,16 @@ public:
            m_fRotateP,              /// 第一关节转动轴坐标，通常这里晃动最小，方便计算速度
            m_fLastRotateP;          /// 前一采样时刻第一关节转动轴坐标
     CPoint m_fInterP;               /// 机器鱼运动中间插值临时点
-    double m_fv,                    /// 鱼的速度，单位cm/s 
-           m_fvdir,                 /// 速度方向，单位弧度[-π,π]
-           m_fav,                   /// 角速度，单位弧度/s 
+    double m_fv,                    /// 鱼的速度，单位cm/s
+           m_fvdir,                 /// 速度方向，单位rad [-π,π]
+           m_fav,                   /// 角速度，单位rad/s 
            m_fdirection,            /// 方向角,单位弧度[-π,π]
-           m_flastdirection;        /// 前一采样时刻方向角,单位弧度[-π,π]
-    double m_fTargetPosDir;         /// 到目标点后期望的方向，弧度[-π,π]
+           m_flastdirection;        /// 前一采样时刻方向角,单位rad[-π,π]
+    double m_fTargetPosDir;         /// 到目标点后期望的方向，单位rad[-π,π]
     int    m_fID;                   /// 机器鱼id号
     int    m_fTeamID;               /// 机器鱼所属的Team编号
     char   m_fTeamName[256];        /// 机器鱼所属的Team名字
-    char   m_ftime;                 /// 前后两次更新信息时间间隔，待定
-////////////////////////////////////////////////////////////////
-    CFishInfo();
-
-    BOOL IsSameAction(CFishAction action);         /**判断action是否跟目前鱼执行的动作一样*/
-    BOOL GetLastAction(CFishAction& action);       /**将上一次动作赋值给action*/
-
-    int GetCurrentSpeed();                         /**返回当前的控制速度档*/
-    int GetCurrentDirection();                     /**返回当前的控制方向档*/
-    int GetCurrentMode();                          /**返回当前的控制模式*/
-    int GetCurrentState();                         /**返回当前的控制状态*/
-    int GetCurrentDisplay();                       /**返回当前的调试状态位Display*/
-
-    int GetFishID();                               /**返回鱼的ID*/
-    int SetFishID(int id);                         /**设置鱼的ID*/
-
-    int GetFishTeamID();                           /**返回鱼所属的Team ID*/
-    int SetFishTeamID(int id);                     /**设置鱼所属的Team ID*/
-
-    char* GetFishTeamName();                       /**返回鱼所属的Team名*/
-    int SetFishTeamName(const char* fteamName);    /**设置鱼所属的Team名*/
-
-    void GetCurrentAction(CFishAction& action);    /**获得当前的动作状态*/
-    void SetAction(CFishAction& action);           /**记录机器鱼的动作*/
-
-    CPoint GetHeaderPoint();                       /**返回鱼头尖端坐标*/
-    CPoint GetHeaderPoint(int r,double dir=0.0);   /**返回距离鱼r，和鱼方向夹角为dir度（顺时针为正，逆为负,注意单位不是弧度）的点*/
-    void   CalHeaderPoint();                       /**计算鱼头尖端坐标*/
-
-    CPoint GetRotatePoint();                       /**返回第一关节转动轴坐标*/
-    void   CalRotatePoint();                       /**计算第一关节转动轴坐标*/
-
-    double GetV(void);                             /**返回速度，单位cm/s */
-    double GetAV(void);                            /**返回角速度，单位弧度/s */
-    double GetVdirection(void);                    /**返回速度方向，单位弧度*/
-    double GetLastDiredtion(void);                 /**返回上一次鱼运动方向，单位弧度*/
-    void   CalSpeedPara(void);                     /**计算速度、角速度、速度方向*/
-
-    void   SetInfo(CPoint pt,double dir,int time); /**根据最新的图像识别信息，更新设置鱼的信息，在图像识别算法中用*/
-    CPoint GetCenterPoint() const;                 /**返回中心点坐标*/
-    CPoint GetLastCenterPoint();                   /**返回上个周期鱼中心点的位置*/
-    double GetDirection() const;                   /**返回鱼头方向*/
-
-    void   SetToPos(CPoint pt,double dir);         /**设置目标点坐标及到目标点后期望的方向，dir弧度*/
-    CPoint GetToPoint();                           /**返回目标点坐标*/
-
-    double GetHeadToPosDistance();                 /**返回鱼鱼头尖端到设定目标点m_toPos的距离，单位为坐标单位，如果目标点没设定则返回-1*/
-    double GetToPosDistance();                     /**返回鱼中心点到设定目标点m_toPos的距离，单位为坐标单位，如果目标点没设定则返回-1*/
-    double GetToPosDirection(BOOL over=FALSE);     /**获得鱼中心点到设定目标点m_toPos的方向（-PI—PI），未设定目的点时返回-10,over为真则考虑过冲，现在一般不用考虑了*/
-    double GetToPosDistance(CPoint pos,BOOL dir=FALSE);/**返回鱼中心点到pos点的距离，单位为坐标单位，如果dir为真，则返回结果是距离+角度*/
-
-    BOOL   GetPTPAction(CFishAction& action);      /**通过路径规划，确定PTP的临时插值目标点，并得到目前到达临时目标点对应的action，待定*/
-    CPoint GetInterPoint();                        /**返回由GetPTPAction确定的插值目标点坐标，待定*/
-////////////////////////////////////////////////////////////////
+    char   m_ftime;                 /// 前后两次更新信息时间间隔（待定）
 };
 
 #endif /*MUR_FISHACINFO*/

@@ -10,12 +10,12 @@ CStrategy::CStrategy() :
 }
 
 void CStrategy::spinP2PMove(const CPoint &goal, CFishInfo &fish, CFishAction &action) {
-    CPoint fishpt = fish.GetCenterPoint(); // 鱼身位置
-    double fishdir = fish.GetDirection(); // 鱼头方向角
+    CPoint fishpt = fish.centerPos(); // 鱼身位置
+    double fishdir = fish.currentDirection(); // 鱼头方向角
     double distance = getDistance(fishpt, goal); // 计算鱼身和目标点的距离
     double direction = normalizeAngle(getVecAngle(fishpt, goal) - fishdir) / M_PI * 180; /// -180 <= direction <= 180
 
-    fish.SetAction(action);
+    fish.updateAction(action);
 
     /**
      * @note 以下是一坨调参，分别对应远距离运动与近距离运动方向决策
@@ -57,16 +57,16 @@ void CStrategy::spinP2PMove(const CPoint &goal, CFishInfo &fish, CFishAction &ac
         }
     }
 
-    fish.SetAction(action);
+    fish.updateAction(action);
 }
 
 void CStrategy::spinP2PMoveFromLeft(const CPoint &goal, CFishInfo &fish, CFishAction &action) {
-    CPoint fishpt = fish.GetCenterPoint(); // 鱼身位置
-    double fishdir = fish.GetDirection(); // 鱼头方向角
+    CPoint fishpt = fish.centerPos(); // 鱼身位置
+    double fishdir = fish.currentDirection(); // 鱼头方向角
     double distance = getDistance(fishpt, goal); // 计算鱼身和目标点的距离
     double direction = normalizeAngle(getVecAngle(fishpt, goal) - fishdir) / M_PI * 180; /// -180 <= direction <= 180
 
-    fish.SetAction(action);
+    fish.updateAction(action);
 
     using minmax_t = std::pair<int, int>;
     using RangeDirectionPair = std::pair<minmax_t, int>;
@@ -95,16 +95,16 @@ void CStrategy::spinP2PMoveFromLeft(const CPoint &goal, CFishInfo &fish, CFishAc
         }
     }
 
-    fish.SetAction(action);
+    fish.updateAction(action);
 }
 
 void CStrategy::spinP2PMoveFromRight(const CPoint &goal, CFishInfo &fish, CFishAction &action) {
-    CPoint fishpt = fish.GetCenterPoint(); // 鱼身位置
-    double fishdir = fish.GetDirection(); // 鱼头方向角
+    CPoint fishpt = fish.centerPos(); // 鱼身位置
+    double fishdir = fish.currentDirection(); // 鱼头方向角
     double distance = getDistance(fishpt, goal); // 计算鱼身和目标点的距离
     double direction = normalizeAngle(getVecAngle(fishpt, goal) - fishdir) / M_PI * 180; /// -180 <= direction <= 180
 
-    fish.SetAction(action);
+    fish.updateAction(action);
 
     using minmax_t = std::pair<int, int>;
     using RangeDirectionPair = std::pair<minmax_t, int>;
@@ -133,12 +133,12 @@ void CStrategy::spinP2PMoveFromRight(const CPoint &goal, CFishInfo &fish, CFishA
         }
     }
 
-    fish.SetAction(action);
+    fish.updateAction(action);
 }
 
 bool CStrategy::P2PMove(const CPoint &goal, CFishInfo &fish, CFishAction &action) {
-    CPoint fishpt = fish.GetCenterPoint(); // 鱼身位置
-    double fishdir = fish.GetDirection(); // 鱼头方向角
+    CPoint fishpt = fish.centerPos(); // 鱼身位置
+    double fishdir = fish.currentDirection(); // 鱼头方向角
     double distance = getDistance(fishpt, goal); // 计算鱼身和目标点的距离
     double direction = normalizeAngle(getVecAngle(fishpt, goal) - fishdir) / M_PI * 180; /// -180 <= direction <= 180
 
@@ -161,7 +161,7 @@ void CStrategy::stop(RefArray<CFishInfo> &aFish, RefArray<CFishAction> &aAction,
         turn_mode_ = 0;
     }
 
-    aFish[id].SetAction(aAction[id]);
+    aFish[id].updateAction(aAction[id]);
 }
 
 void CStrategy::go(RefArray<CFishInfo> &aFish, RefArray<CFishAction> &aAction,
@@ -183,5 +183,5 @@ void CStrategy::go(RefArray<CFishInfo> &aFish, RefArray<CFishAction> &aAction,
         aAction[id].state = 0;
     }
 
-    aFish[id].SetAction(aAction[id]);
+    aFish[id].updateAction(aAction[id]);
 }

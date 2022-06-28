@@ -25,7 +25,7 @@ class CBallInfo : public BALLINFO
 {
 public:
     /**
-     * @brief 默认拷贝构造
+     * @brief 默认构造
      * @note 此时水球的信息是无效量
      * @author zymelaii
      */

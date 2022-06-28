@@ -24,7 +24,7 @@
 class CFishAction : public FISHACTION {
 public:
     /**
-     * @brief 默认拷贝构造
+     * @brief 默认构造
      * @note 由init()完成
      * @author zymelaii
      */

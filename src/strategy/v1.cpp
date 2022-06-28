@@ -252,8 +252,8 @@ int judgeball(CPoint point) {
  * @brief 垂直向上，下顶球
  */
 void StrategyCloneV1::movingshot1(int mode,CPoint aimpt,CFishAction &action,int fishID,CFishInfo m_FishInfo,CPoint doorpt,CPoint shotpt0) {
-    CPoint FishPt = m_FishInfo.GetCenterPoint(); // 鱼身坐标
-    CPoint FishHeadPt = m_FishInfo.GetHeaderPoint(); // 鱼头坐标
+    CPoint FishPt = m_FishInfo.centerPos(); // 鱼身坐标
+    CPoint FishHeadPt = m_FishInfo.headerPos(); // 鱼头坐标
     double FishDir = normalizeAngle(getVecAngle(FishPt, FishHeadPt)) / M_PI * 180; // 鱼的朝向角度（鱼身向鱼头）
     CPoint templeft0, templeft1, templeft2, tempright0, tempright1, tempright2; // 临时击球点
 
@@ -431,8 +431,8 @@ void StrategyCloneV1::movingshot2(
     CPoint doorpt,
     CPoint shotpt0) //垂直向左，向右顶球
 {
-    CPoint FishPt = m_FishInfo.GetCenterPoint(); // 鱼身坐标
-    CPoint FishHeadPt = m_FishInfo.GetHeaderPoint(); // 鱼头坐标
+    CPoint FishPt = m_FishInfo.centerPos(); // 鱼身坐标
+    CPoint FishHeadPt = m_FishInfo.headerPos(); // 鱼头坐标
     double FishDir = normalizeAngle(getVecAngle(FishPt, FishHeadPt)) / M_PI * 180; // 鱼的朝向角度（鱼身向鱼头）
     CPoint tempup0, tempup1, tempup2, tempdown0, tempdown1, tempdown2; // 临时击球点
 
@@ -577,8 +577,8 @@ void StrategyCloneV1::movingshot2(
 }
 
 void StrategyCloneV1::movingshot3(int mode,CPoint aimpt,CFishAction &action,int fishID,CFishInfo m_FishInfo,CPoint doorpt,CPoint shotpt0) { //垂直向左，向右顶球
-    CPoint FishPt = m_FishInfo.GetCenterPoint(); // 鱼身坐标
-    CPoint FishHeadPt = m_FishInfo.GetHeaderPoint(); // 鱼头坐标
+    CPoint FishPt = m_FishInfo.centerPos(); // 鱼身坐标
+    CPoint FishHeadPt = m_FishInfo.headerPos(); // 鱼头坐标
     double FishDir = normalizeAngle(getVecAngle(FishPt, FishHeadPt)) / M_PI * 180; // 鱼的朝向角度（鱼身向鱼头）
     CPoint tempup0, tempup1, tempup2, tempdown0, tempdown1, tempdown2; // 临时击球点
 
@@ -790,9 +790,9 @@ bool StrategyCloneV1::Strategy(RefArray<CFishAction> aAction, RefArray<CFishInfo
     //std::cout<<doorpt1.x<<std::endl;
     aimpt=aBallinfo[0].getCenter();
     std::cout<<aimpt.x<<" "<<aimpt.y<<std::endl;
-    FishPt=aFish[A].GetCenterPoint();//鱼中心点坐标
-    FishPt1=aFish[B].GetCenterPoint();//鱼中心点坐标
-    FishHeadPt = aFish[A].GetHeaderPoint();//鱼头坐标
+    FishPt=aFish[A].centerPos();//鱼中心点坐标
+    FishPt1=aFish[B].centerPos();//鱼中心点坐标
+    FishHeadPt = aFish[A].headerPos();//鱼头坐标
 
     FishDir = normalizeAngle(getVecAngle(FishPt, FishHeadPt) * 180 / M_PI, false); // 鱼的角度
 
