@@ -1,88 +1,15 @@
 /**
- * @brief Ë®ÖĞĞ­×÷¶¥Çò²ßÂÔµ¼³ö
+ * @brief å§˜ç¿ è…‘é—å¿ç¶”æ¤¤å‰æ‚†ç»›æ «æšç€µç…åš­
  * @author zymelaii
  * @date 2022-06-29
  */
 
-#define _CRT_SECURE_NO_WARNINGS
-
-#include "./mathtools.h"
-#include "./winhelper.h"
-#include "./oshelper.h"
-
 #include "./official/strategyhelper.h"
+
 #include "./strategy/v1.h"
 #include "./strategy/statusviewer.h"
 #include "./strategy/test_pt2measure.h"
-
-#include <cstdlib>
-#include <iostream>
-#include <thread>
-#include <queue>
-#include <ctime>
-#include <cstdlib>
-#include <functional>
-
-class LittleLittleFishDashTargetBallToDeathAndSlowDownSmoothlyAsDoveStrategy : public CStrategy {
-public:
-    virtual bool Strategy(
-        RefArray<CFishAction> aAction,
-        RefArray<CFishInfo> aFish,
-        RefArray<CBallInfo> aBallinfo,
-        RefArray<OBSTAINFO> aObstacle,
-        RefArray<CHANNEL> aChannel) override {
-
-        auto& ball = aBallinfo[0];
-        auto& fish = aFish[0];
-        auto& action = aAction[0];
-
-        static bool init = true;
-        if (init) {
-            action.speed = std::max(action.speed, 10);
-            fish.updateAction(action);
-            fish.update(fish.centerPos(), fish.currentDirection(), 1);
-            init = false;
-        }
-
-        std::cout << __LINE__ << "# AÓãÖ´ĞĞ¶¯×÷£º½«Ë®Çò¶¥ÖÁÒ»ºÅÃÅÉÏ·½100µ¥Î»¾àÀë´¦" << std::endl;
-
-        //! ¼ÆËã»÷Çòµã
-        const auto goal = CPoint(aChannel[0].center.x, aChannel[0].center.y - 100);
-        auto hitPoint = ball.calcHitPoint(goal);
-        std::cout << __LINE__ << "# ÆÚÍû»÷Çòµã£º" << hitPoint
-            << "£¬»÷Çò·½Ïò£º" << normalizeAngle(getVecAngle(ball.getCenter(), goal)) / M_PI * 180 << "deg" << std::endl;
-
-        //! µ±ÓãÎ»ÒÆ²î¹ıĞ¡Ê±£¬¿ÉÒÔÔ¤²âÓã±»×èµ²¶ø¿¨ËÀ
-        if (getDistance(fish.centerPos(), fish.lastCenterPos()) < 5 && rand() % 16 == 1) {
-            //! ÔË¶¯·½ÏòµÄ·¨Ïò·½ÏòÊÇ×îÓĞ¿ÉÄÜ°ÚÍÑ¿¨ËÀ×´Ì¬µÄ·½Ïò
-            auto vec = normalizeAngle(getVecAngle(fish.lastCenterPos(), fish.centerPos()) + M_PI / 2);
-            const auto distance = getDistance(fish.centerPos(), ball.getCenter());
-            /// ·¨ÏòÎ»ÒÆ¡Ê[10, 20)
-            const auto perp_pulse = 10 * (1 + atan(distance - 2) / M_PI);
-            std::cout << __LINE__ << "# Ì½²âµ½AÓã½éÈë¿¨ËÀ×´Ì¬£¬ÒıÈëËæ»úÈÅ¶¯·¨ÏòÎ»ÒÆ" << perp_pulse << "cm" << std::endl;
-
-            //! ÒÔÄ¿±êµãÎª»ù·¨ÏòÎ»ÒÆ£¨ÒÑÉáÆú£©
-            // hitPoint.x += perp_pulse * cos(vec);
-            // hitPoint.y += perp_pulse * sin(vec);
-
-            //! ÒÔÓãÖĞĞÄÆ«ÏòÓãÎ²µÄ×ø±êÎª»ù·¨ÏòÎ»ÒÆ
-            hitPoint.x = fish.centerPos().x + perp_pulse * cos(vec) - (fish.headerPos().x - fish.centerPos().x) * 2;
-            hitPoint.y = fish.centerPos().y + perp_pulse * sin(vec) - (fish.headerPos().y - fish.centerPos().y) * 2;
-        }
-
-        //! Éè¶¨Ä¿±êµã
-        fish.setTarget(hitPoint, normalizeAngle(getVecAngle(fish.headerPos(), hitPoint)));
-
-        //! ¸ù¾İÄ¿±ê¾àÀëÆ½»¬¹éÒ»»¯ÔË¶¯ËÙ¶È
-        const auto distance = getDistance(fish.headerPos(), fish.targetPos());
-        action.speed = static_cast<int>((1 + atan(distance / 30) / M_PI) * 5);
-
-        //! ·¢³öµãµ½µãÒÆ¶¯Ö¸Áî
-        spinP2PMove(fish.targetPos(), fish, action);
-
-        return true;
-    }
-};
+#include "./strategy/smoothtargeting.h"
 
 BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
     clear();

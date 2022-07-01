@@ -15,6 +15,13 @@
 #define STRATEGY_API __declspec(dllimport)
 #endif
 
+#define _CRT_SECURE_NO_WARNINGS
+
+#include "../common.h"
+#include "../mathtools.h"
+#include "../oshelper.h"
+#include "../winhelper.h"
+
 #include "../official/struct.h"
 #include "../official/targetver.h"
 #include "../official/externrobot.h"

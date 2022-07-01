@@ -1,7 +1,6 @@
 #include "../official/strategy.h"
 #include "../official/externrobot.h"
 #include "../mathtools.h"
-#include <iostream>
 #include <vector>
 
 CStrategy::CStrategy() :
