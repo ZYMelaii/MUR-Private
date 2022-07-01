@@ -35,7 +35,7 @@ double CBallInfo::getRadius() const {
 }
 
 CPoint CBallInfo::calcHitPoint(const CPoint &goal) const {
-	double direction = getVecAngle(centerPt, goal);
+	double direction = normalizeAngle(getVecAngle(centerPt, goal));
 	return {
 		static_cast<int>(centerPt.x - radius * cos(direction)),
 		static_cast<int>(centerPt.y - radius * sin(direction)),

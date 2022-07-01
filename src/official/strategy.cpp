@@ -9,6 +9,10 @@ CStrategy::CStrategy() :
     // PASS
 }
 
+CStrategy::~CStrategy() {
+    // PASS
+}
+
 void CStrategy::spinP2PMove(const CPoint &goal, CFishInfo &fish, CFishAction &action) {
     CPoint fishpt = fish.centerPos(); // 鱼身位置
     double fishdir = fish.currentDirection(); // 鱼头方向角

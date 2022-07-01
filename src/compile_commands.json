@@ -1,0 +1,37 @@
+[
+{
+  "directory": "D:/WorkSpace/MUR-Private/ws_ninja",
+  "command": "D:\\EnvrSupport\\MinGW-w64\\gcc-11.2.0-mingw-w64ucrt-9.0.0-r5\\bin\\c++.exe -DMURStrategy_EXPORTS -std=gnu++20 -o src\\CMakeFiles\\MURStrategy.dir\\dll.cpp.obj -c D:\\WorkSpace\\MUR-Private\\src\\dll.cpp",
+  "file": "D:\\WorkSpace\\MUR-Private\\src\\dll.cpp"
+},
+{
+  "directory": "D:/WorkSpace/MUR-Private/ws_ninja",
+  "command": "D:\\EnvrSupport\\MinGW-w64\\gcc-11.2.0-mingw-w64ucrt-9.0.0-r5\\bin\\c++.exe -DMURStrategy_EXPORTS -std=gnu++20 -o src\\CMakeFiles\\MURStrategy.dir\\mathtools.cpp.obj -c D:\\WorkSpace\\MUR-Private\\src\\mathtools.cpp",
+  "file": "D:\\WorkSpace\\MUR-Private\\src\\mathtools.cpp"
+},
+{
+  "directory": "D:/WorkSpace/MUR-Private/ws_ninja",
+  "command": "D:\\EnvrSupport\\MinGW-w64\\gcc-11.2.0-mingw-w64ucrt-9.0.0-r5\\bin\\c++.exe -DMURStrategy_EXPORTS -std=gnu++20 -o src\\CMakeFiles\\MURStrategy.dir\\official\\ballinfo.cpp.obj -c D:\\WorkSpace\\MUR-Private\\src\\official\\ballinfo.cpp",
+  "file": "D:\\WorkSpace\\MUR-Private\\src\\official\\ballinfo.cpp"
+},
+{
+  "directory": "D:/WorkSpace/MUR-Private/ws_ninja",
+  "command": "D:\\EnvrSupport\\MinGW-w64\\gcc-11.2.0-mingw-w64ucrt-9.0.0-r5\\bin\\c++.exe -DMURStrategy_EXPORTS -std=gnu++20 -o src\\CMakeFiles\\MURStrategy.dir\\official\\fishaction.cpp.obj -c D:\\WorkSpace\\MUR-Private\\src\\official\\fishaction.cpp",
+  "file": "D:\\WorkSpace\\MUR-Private\\src\\official\\fishaction.cpp"
+},
+{
+  "directory": "D:/WorkSpace/MUR-Private/ws_ninja",
+  "command": "D:\\EnvrSupport\\MinGW-w64\\gcc-11.2.0-mingw-w64ucrt-9.0.0-r5\\bin\\c++.exe -DMURStrategy_EXPORTS -std=gnu++20 -o src\\CMakeFiles\\MURStrategy.dir\\official\\fishinfo.cpp.obj -c D:\\WorkSpace\\MUR-Private\\src\\official\\fishinfo.cpp",
+  "file": "D:\\WorkSpace\\MUR-Private\\src\\official\\fishinfo.cpp"
+},
+{
+  "directory": "D:/WorkSpace/MUR-Private/ws_ninja",
+  "command": "D:\\EnvrSupport\\MinGW-w64\\gcc-11.2.0-mingw-w64ucrt-9.0.0-r5\\bin\\c++.exe -DMURStrategy_EXPORTS -std=gnu++20 -o src\\CMakeFiles\\MURStrategy.dir\\official\\strategy.cpp.obj -c D:\\WorkSpace\\MUR-Private\\src\\official\\strategy.cpp",
+  "file": "D:\\WorkSpace\\MUR-Private\\src\\official\\strategy.cpp"
+},
+{
+  "directory": "D:/WorkSpace/MUR-Private/ws_ninja",
+  "command": "D:\\EnvrSupport\\MinGW-w64\\gcc-11.2.0-mingw-w64ucrt-9.0.0-r5\\bin\\c++.exe -DMURStrategy_EXPORTS -std=gnu++20 -o src\\CMakeFiles\\MURStrategy.dir\\strategy\\v1.cpp.obj -c D:\\WorkSpace\\MUR-Private\\src\\strategy\\v1.cpp",
+  "file": "D:\\WorkSpace\\MUR-Private\\src\\strategy\\v1.cpp"
+}
+]

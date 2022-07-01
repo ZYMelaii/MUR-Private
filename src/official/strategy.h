@@ -42,6 +42,8 @@ private:
 
 public:
 	CStrategy();
+	virtual ~CStrategy();
+
 	/**
 	 * @brief 原地转圈指令
 	 * @param aFish 鱼列表
