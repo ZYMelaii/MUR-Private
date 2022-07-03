@@ -3,6 +3,7 @@
 
 #include "../official/strategyhelper.h"
 #include "../oshelper.h"
+#include "../pipelogger.h"
 
 /**
  * @brief 状态显示策略
@@ -18,21 +19,21 @@ public:
         RefArray<OBSTAINFO> aObstacle,
         RefArray<CHANNEL> aChannel) override {
 
+        PipeLogger logger("SvrLogger");
+
         for (int i = 0; i < aFish.size(); ++i) {
-            std::cout << aFish[i] << "\n" << aAction[i] << "\n";
+            logger << aFish[i] << "\n" << aAction[i] << "\n";
         }
 
         for (int i = 0; i < aBallinfo.size(); ++i) {
-            std::cout << "[" << i + 1 << "] " << aBallinfo[i] << "\n";
+            logger << "[" << i + 1 << "] " << aBallinfo[i] << "\n";
         }
 
         for (int i = 0; i < aChannel.size(); ++i) {
-            std::cout << "[" << i + 1 << "] " << aChannel[i] << "\n";
+            logger << "[" << i + 1 << "] " << aChannel[i] << "\n";
         }
 
-        std::cout << std::flush;
-
-        return true;
+        return logger.submit();
     }
 };
 

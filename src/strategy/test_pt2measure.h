@@ -4,6 +4,7 @@
 #include "../official/strategyhelper.h"
 #include "../mathtools.h"
 #include "../oshelper.h"
+#include "../pipelogger.h"
 
 /**
  * @brief 测试用策略，输出两点之间的相关测算参数
@@ -29,18 +30,18 @@ public:
         const auto distance = getDistance(A, B);
         const auto angle = getVecAngle(A, B) / M_PI * 180;
 
-        std::cout <<
+        PipeLogger logger("SvrLogger");
+
+        logger <<
             "[TESTCASE] Information of Measure and Calculation {" << "\n" <<
             "    { alias ball[1] } A: " << A << "\n" <<
             "    { alias ball[2] } B: " << B << "\n" <<
             "    { alias vector(A -> B) } T: " << T << "\n" <<
             "    distance(A, B): " << distance << "cm\n" <<
             "    angle(T): " << angle << "deg\n" <<
-            "}\n";
+            "}";
 
-        std::cout << std::flush;
-
-        return true;
+        return logger.submit();
     }
 };
 

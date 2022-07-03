@@ -5,7 +5,7 @@
 
 #define THIS_IS_ONLY_FOR_THIS_MAX(x, y) (((x)>(y))?(x):(y))
 
-class LittleLittleFishDashTargetBallToDeathAndSlowDownSmoothlyAsDoveStrategy : public CStrategy {
+class SmoothTargeting : public CStrategy {
 public:
     virtual bool Strategy(
         RefArray<CFishAction> aAction,
@@ -65,6 +65,8 @@ public:
         return true;
     }
 };
+
+using LittleLittleFishDashTargetBallToDeathAndSlowDownSmoothlyAsDoveStrategy = SmoothTargeting;
 
 #undef THIS_IS_ONLY_FOR_THIS_MAX
 
