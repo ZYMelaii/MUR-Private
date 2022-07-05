@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include "./svrpipe.h"
+#include "./oshelper.h"
 
 class PipeLogger {
 public:

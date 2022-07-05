@@ -33,7 +33,7 @@ public:
      * @author zymelaii
      * @date 2022-07-03
      */
-    PipeServer& init(const char *pipename);
+    virtual PipeServer& init(const char *pipename);
 
     /**
      * @brief 运行服务端

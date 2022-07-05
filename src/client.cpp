@@ -21,7 +21,7 @@ std::string& trim(std::string &str) {
 
 int main(int argc, char const *argv[]) {
 	PipeClient client;
-	bool succeed = client.connect("SvrLogger");
+	bool succeed = client.connect(argc > 1 ? argv[1] : "SvrLogger");
 	while (true) {
 		printf("$ ");
 		std::string req;

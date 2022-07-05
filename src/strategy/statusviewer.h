@@ -19,21 +19,28 @@ public:
         RefArray<OBSTAINFO> aObstacle,
         RefArray<CHANNEL> aChannel) override {
 
-        PipeLogger logger("SvrLogger");
-
+#if 0
         for (int i = 0; i < aFish.size(); ++i) {
-            logger << aFish[i] << "\n" << aAction[i] << "\n";
+            std::cout << aFish[i] << "\n" << aAction[i] << "\n";
         }
 
         for (int i = 0; i < aBallinfo.size(); ++i) {
-            logger << "[" << i + 1 << "] " << aBallinfo[i] << "\n";
+            std::cout << "[" << i + 1 << "] " << aBallinfo[i] << "\n";
         }
+#else
+        std::cout << aFish[0] << "\n" << aAction[0] << "\n";
+        std::cout << aFish[1] << "\n" << aAction[1] << "\n";
+        std::cout << "[" << 1 << "] " << aBallinfo[0] << "\n";
+        std::cout << "[" << 2 << "] " << aBallinfo[1] << "\n";
+#endif
 
         for (int i = 0; i < aChannel.size(); ++i) {
-            logger << "[" << i + 1 << "] " << aChannel[i] << "\n";
+            std::cout << "[" << i + 1 << "] " << aChannel[i] << "\n";
         }
 
-        return logger.submit();
+        std::cout << std::flush;
+
+        return true;
     }
 };
 

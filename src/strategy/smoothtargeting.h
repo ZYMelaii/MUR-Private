@@ -3,7 +3,7 @@
 
 #include "../official/strategyhelper.h"
 
-#define THIS_IS_ONLY_FOR_THIS_MAX(x, y) (((x)>(y))?(x):(y))
+#define MAX_FN_ONLY_FOR_CURRENT_FILE(x, y) (((x)>(y))?(x):(y))
 
 class SmoothTargeting : public CStrategy {
 public:
@@ -20,7 +20,7 @@ public:
 
         static bool init = true;
         if (init) {
-            action.speed = THIS_IS_ONLY_FOR_THIS_MAX(action.speed, 10);
+            action.speed = MAX_FN_ONLY_FOR_CURRENT_FILE(action.speed, 10);
             fish.updateAction(action);
             fish.update(fish.centerPos(), fish.currentDirection(), 1);
             init = false;
@@ -68,6 +68,6 @@ public:
 
 using LittleLittleFishDashTargetBallToDeathAndSlowDownSmoothlyAsDoveStrategy = SmoothTargeting;
 
-#undef THIS_IS_ONLY_FOR_THIS_MAX
+#undef MAX_FN_ONLY_FOR_CURRENT_FILE
 
 #endif /*STRATEGY_SMOOTHTARGETING_H*/

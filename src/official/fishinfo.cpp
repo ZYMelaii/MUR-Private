@@ -7,6 +7,7 @@
 #include "../official/fishinfo.h"
 #include "../official/externrobot.h"
 #include "../mathtools.h"
+#include <exception>
 
 CFishInfo::CFishInfo() :
     m_fHeaderP(nil, nil), m_fTargetPos(nil, nil), m_fInterP(nil, nil),

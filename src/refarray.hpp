@@ -21,7 +21,6 @@ public:
 	}
 	RefArray(T *array, size_t n) :
 		array_(static_cast<value_type*>(array)), size_(n) {
-		assert(n > 0);
 	}
 	template <typename G, std::enable_if_t<
 		std::is_same_v<value_type, typename RefArray<G>::value_type>>>

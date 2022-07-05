@@ -30,18 +30,18 @@ public:
         const auto distance = getDistance(A, B);
         const auto angle = getVecAngle(A, B) / M_PI * 180;
 
-        PipeLogger logger("SvrLogger");
-
-        logger <<
+        std::cout <<
             "[TESTCASE] Information of Measure and Calculation {" << "\n" <<
             "    { alias ball[1] } A: " << A << "\n" <<
             "    { alias ball[2] } B: " << B << "\n" <<
             "    { alias vector(A -> B) } T: " << T << "\n" <<
             "    distance(A, B): " << distance << "cm\n" <<
             "    angle(T): " << angle << "deg\n" <<
-            "}";
+            "}\n";
 
-        return logger.submit();
+        std::cout << std::flush;
+
+        return true;
     }
 };
 

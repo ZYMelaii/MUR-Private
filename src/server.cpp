@@ -1,5 +1,7 @@
 #include "./svrpipe.h"
 #include "./winhelper.h"
+#include <chrono>
+#include <thread>
 #include <functional>
 #include <string_view>
 #include <iostream>
@@ -25,6 +27,6 @@ public:
 };
 
 int main(int argc, char const *argv[]) {
-	SvrLogger().init("SvrLogger").run();
+	SvrLogger().init(argc > 1 ? argv[1] : "SvrLogger").run();
 	return 0;
 }

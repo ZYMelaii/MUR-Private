@@ -23,7 +23,7 @@ double getDistance(const CPoint &a, const CPoint &b) {
 	const double dx = a.x - b.x, dy = a.y - b.y;
 	return sqrt(dx * dx + dy * dy);
 }
-#include <iostream>
+
 double getVecAngle(const CPoint &origin, const CPoint &dest) {
 	CPoint vec(dest.x - origin.x, dest.y - origin.y);
 	return atan2(vec.y, vec.x);
