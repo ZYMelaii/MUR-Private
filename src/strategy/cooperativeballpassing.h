@@ -1,23 +1,23 @@
 #include "../official/strategyhelper.h"
 
 /**
- * @brief 朴素水中协作顶球策略
- * @note 该策略时间相干，请确保策略的生命周期不短于赛程
+ * @brief ����ˮ��Э���������
+ * @note �ò���ʱ����ɣ���ȷ�����Ե��������ڲ���������
  * @author zymelaii
  * @date 2022-07-04
  */
 class CooperativeBallPassing : public CStrategy {
 public:
 	/**
-	 * @brief 默认构造，作必要的初始化
-	 * @param width 识别图像的宽度
-	 * @param height 识别图像的高度
+	 * @brief Ĭ�Ϲ��죬����Ҫ�ĳ�ʼ��
+	 * @param width ʶ��ͼ��Ŀ���
+	 * @param height ʶ��ͼ��ĸ߶�
 	 */
 	CooperativeBallPassing(int width, int height);
 
 	/**
-	 * @brief 朴素水中协作顶球策略
-	 * @note 策略按预先设计的流程运行，详见对应源码
+	 * @brief ����ˮ��Э���������
+	 * @note ���԰�Ԥ����Ƶ��������У������ӦԴ��
 	 */
 	virtual bool Strategy(
 		RefArray<CFishAction> aAction,
@@ -28,78 +28,78 @@ public:
 
 public:
 	/**
-	 * @brief 稳定悬停指令
-	 * @note 原地转圈
+	 * @brief �ȶ���ָͣ��
+	 * @note ԭ��תȦ
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
 	void stableHoverInstruct(CFishInfo &fish, CFishAction &action);
 
 	/**
-	 * @brief 水池区域划分
+	 * @brief ˮ�����򻮷�
 	 */
 	enum Region {
-		Empty  = 0b00000000, /// 未知区域
-		Upper  = 0b00000001, /// 上半平面
-		Lower  = 0b00000010, /// 下半平面
-		Left   = 0b00000100, /// 左三分平面
-		Middle = 0b00001000, /// 中三分平面
-		Right  = 0b00010000, /// 右三分平面
-		UL = Upper | Left,   /// 左上区域
-		UM = Upper | Middle, /// 中上区域
-		UR = Upper | Right,  /// 右上区域
-		LL = Lower | Left,   /// 左下区域
-		LM = Lower | Middle, /// 中下区域
-		LR = Lower | Right,  /// 右下区域
+		Empty  = 0b00000000, /// δ֪����
+		Upper  = 0b00000001, /// �ϰ�ƽ��
+		Lower  = 0b00000010, /// �°�ƽ��
+		Left   = 0b00000100, /// ������ƽ��
+		Middle = 0b00001000, /// ������ƽ��
+		Right  = 0b00010000, /// ������ƽ��
+		UL = Upper | Left,   /// ��������
+		UM = Upper | Middle, /// ��������
+		UR = Upper | Right,  /// ��������
+		LL = Lower | Left,   /// ��������
+		LM = Lower | Middle, /// ��������
+		LR = Lower | Right,  /// ��������
 	};
 
 	/**
-	 * @brief 区域判定
-	 * @param pos 待判定的点位
-	 * @return 所属区域的Region标志
+	 * @brief �����ж�
+	 * @param pos ���ж��ĵ�λ
+	 * @return ���������Region��־
 	 */
 	Region regionPredict(const CPoint &pos) const;
 
 protected:
 	/**
-	 * @brief 策略阶段划分
-	 * @note 策略划分为三个小阶段策略执行，三个阶段由下列策略
-	 *  函数具体描述。
+	 * @brief ���Խ׶λ���
+	 * @note ���Ի���Ϊ����С�׶β���ִ�У������׶������в���
+	 *  ��������������
 	 */
 	enum class Phase { Stage_1st, Stage_2nd, Stage_3rd };
 
 	/**
-	 * @brief 阶段预测
-	 * @note 具体执行的策略将依据该方法进行分发调用。
-	 * @return 当前应当执行的策略阶段
+	 * @brief �׶�Ԥ��
+	 * @note ����ִ�еĲ��Խ����ݸ÷������зַ����á�
+	 * @return ��ǰӦ��ִ�еĲ��Խ׶�
 	 */
 	Phase phasePredict() const;
 
 	/**
-	 * @brief 第一阶段策略
-	 * @note A鱼顶开球门进入下平面区并保证B鱼有足够活动空间，
-	 *  维护水球的稳定位置应在此阶段进行，同时B鱼应当保证A进、
-	 *  入下平面的过程中有足够的活动空间。
+	 * @brief ��һ�׶β���
+	 * @note A�㶥�����Ž�����ƽ��������֤B�����㹻��ռ䣬
+	 *  ά��ˮ����ȶ�λ��Ӧ�ڴ˽׶ν��У�ͬʱB��Ӧ����֤A����
+	 *  ����ƽ��Ĺ��������㹻�Ļ�ռ䡣
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
 	void StageInstruct_1st(RefArray<CFishAction> aAction);
 
 	/**
-	 * @brief 第二阶段策略
-	 * @note 此时A鱼已经进入下平面，B鱼开始顶球从一号门将球
-	 *  送入上平面并继续送往二号门左上方；同时A鱼继续向二号
-	 *  门移动，顶开球门在水池右上角等待。重点注意A鱼与B鱼的
-	 *  任务完成同步率。
+	 * @brief �ڶ��׶β���
+	 * @note ��ʱA���Ѿ�������ƽ�棬B�㿪ʼ�����һ���Ž���
+	 *  ������ƽ�沢�����������������Ϸ���ͬʱA����������
+	 *  ���ƶ�������������ˮ�����Ͻǵȴ����ص�ע��A����B���
+	 *  �������ͬ���ʡ�
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
 	void StageInstruct_2nd(RefArray<CFishAction> aAction);
 
 	/**
-	 * @brief 第三阶段策略
-	 * @note A鱼已经顶开球门进入上平面右上角等待，B鱼将球送往
-	 *  下平面并准备射门，同时A鱼等待B鱼送球完成并堵住二号门。
+	 * @brief �����׶β���
+	 * @note A���Ѿ��������Ž�����ƽ�����Ͻǵȴ���B�㽫������
+	 *  ��ƽ�沢׼�����ţ�ͬʱA��ȴ�B��������ɲ���ס�����š�
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
@@ -107,21 +107,21 @@ protected:
 
 protected:
 	/**
-	 * @brief 场地初始化
-	 * @note 方法将等待通道（门卡）设定完毕并初始化场地信息，
-	 *  等待的结束条件为门1、门2、球门位置皆设定完毕。
-	 * @return 是否完成初始化
+	 * @brief ���س�ʼ��
+	 * @note �������ȴ�ͨ�����ſ����趨��ϲ���ʼ��������Ϣ��
+	 *  �ȴ��Ľ�������Ϊ��1����2������λ�ý��趨��ϡ�
+	 * @return �Ƿ���ɳ�ʼ��
 	 */
 	bool init(const RefArray<CHANNEL> &aChannel);
 
 	/**
-	 * @brief 追踪并更新备份实物鱼与水球信息
-	 * @note 该函数将对传参的有效性进行检测，对于无效信息所
-	 *  属的成员将利用模拟计算进行数据的更新。
-	 * @param aAction 原始动作列表
-	 * @param aFish 原始鱼信息列表
-	 * @param aBallinfo 原始水球信息列表
-	 * @return 是否应用模拟计算
+	 * @brief ׷�ٲ����±���ʵ������ˮ����Ϣ
+	 * @note �ú������Դ��ε���Ч�Խ��м�⣬������Ч��Ϣ��
+	 *  ���ĳ�Ա������ģ�����������ݵĸ��¡�
+	 * @param aAction ԭʼ�����б�
+	 * @param aFish ԭʼ����Ϣ�б�
+	 * @param aBallinfo ԭʼˮ����Ϣ�б�
+	 * @return �Ƿ�Ӧ��ģ�����
 	 */
 	bool trackAndUpdate(
 		const RefArray<CFishAction> &aAction,
@@ -130,30 +130,30 @@ protected:
 
 private:
 	/**
-	 * @brief 是否完成初始化
-	 * @note 所有操作都应在初始化完成之后进行
+	 * @brief �Ƿ���ɳ�ʼ��
+	 * @note ���в�����Ӧ�ڳ�ʼ�����֮�����
 	 */
 	bool initialized_;
 
 	/**
-	 * @brief 水池宽高
+	 * @brief ˮ�ؿ���
 	 */
 	int width_, height_;
 
 	/**
-	 * @brief 三个球门的中心位置
+	 * @brief �������ŵ�����λ��
 	 */
 	CPoint door_center_[3];
 
 	/**
-	 * @brief 实物鱼信息实时备份
-	 * @note 当标定丢失时，该信息将用于模拟计算
+	 * @brief ʵ������Ϣʵʱ����
+	 * @note ���궨��ʧʱ������Ϣ������ģ�����
 	 */
 	CFishInfo fish_[2];
 
 	/**
-	 * @brief 水球信息实时备份
-	 * @note 当标定丢失时，该信息将用于模拟计算
+	 * @brief ˮ����Ϣʵʱ����
+	 * @note ���궨��ʧʱ������Ϣ������ģ�����
 	 */
 	CBallInfo ball_;
 };
