@@ -1,23 +1,28 @@
 #include "../official/strategyhelper.h"
 
 /**
- * @brief ÆÓËØË®ÖĞĞ­×÷¶¥Çò²ßÂÔ
- * @note ¸Ã²ßÂÔÊ±¼äÏà¸É£¬ÇëÈ·±£²ßÂÔµÄÉúÃüÖÜÆÚ²»¶ÌÓÚÈü³Ì
+ * @note ç­–ç•¥æ‰€æ¶‰åŠçš„å†…å­˜çš†å­˜å‚¨äºMURobotCtrlç¨‹åºä¸­ï¼Œ
+ *  åˆ‡è®°åŸºäºä¼ å…¥çš„å‚æ•°è¿›è¡Œä¿®æ”¹ã€‚
+ */
+
+/**
+ * @brief æœ´ç´ æ°´ä¸­åä½œé¡¶çƒç­–ç•¥
+ * @note è¯¥ç­–ç•¥æ—¶é—´ç›¸å¹²ï¼Œè¯·ç¡®ä¿ç­–ç•¥çš„ç”Ÿå‘½å‘¨æœŸä¸çŸ­äºèµ›ç¨‹
  * @author zymelaii
  * @date 2022-07-04
  */
 class CooperativeBallPassing : public CStrategy {
 public:
 	/**
-	 * @brief Ä¬ÈÏ¹¹Ôì£¬×÷±ØÒªµÄ³õÊ¼»¯
-	 * @param width Ê¶±ğÍ¼ÏñµÄ¿í¶È
-	 * @param height Ê¶±ğÍ¼ÏñµÄ¸ß¶È
+	 * @brief é»˜è®¤æ„é€ ï¼Œä½œå¿…è¦çš„åˆå§‹åŒ–
+	 * @param width è¯†åˆ«å›¾åƒçš„å®½åº¦
+	 * @param height è¯†åˆ«å›¾åƒçš„é«˜åº¦
 	 */
 	CooperativeBallPassing(int width, int height);
 
 	/**
-	 * @brief ÆÓËØË®ÖĞĞ­×÷¶¥Çò²ßÂÔ
-	 * @note ²ßÂÔ°´Ô¤ÏÈÉè¼ÆµÄÁ÷³ÌÔËĞĞ£¬Ïê¼û¶ÔÓ¦Ô´Âë
+	 * @brief æœ´ç´ æ°´ä¸­åä½œé¡¶çƒç­–ç•¥
+	 * @note ç­–ç•¥æŒ‰é¢„å…ˆè®¾è®¡çš„æµç¨‹è¿è¡Œï¼Œè¯¦è§å¯¹åº”æºç 
 	 */
 	virtual bool Strategy(
 		RefArray<CFishAction> aAction,
@@ -28,132 +33,150 @@ public:
 
 public:
 	/**
-	 * @brief ÎÈ¶¨ĞüÍ£Ö¸Áî
-	 * @note Ô­µØ×ªÈ¦
+	 * @brief ç¨³å®šæ‚¬åœæŒ‡ä»¤
+	 * @note åŸåœ°è½¬åœˆ
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
 	void stableHoverInstruct(CFishInfo &fish, CFishAction &action);
 
 	/**
-	 * @brief Ë®³ØÇøÓò»®·Ö
+	 * @brief æ–œè§’ç§»åŠ¨æŒ‡ä»¤
+	 * @note ç¡®ä¿ç›®æ ‡ç‚¹åœ¨å‰æ–¹åŒºåŸŸ
+	 * @note å½“ç›®æ ‡ç‚¹åœ¨è§†é‡å·¦ä¾§ï¼Œé¡ºæ—¶é’ˆè¿åŠ¨å‘ä¸Šä¾§ç©¿è¶Šï¼›
+	 *  å¦åˆ™é€†æ—¶é’ˆè¿åŠ¨å‘ä¸‹ä¾§ç©¿è¶Šã€‚
+	 * @param goal ç›®æ ‡ç‚¹
+	 * @author zymelaii
+	 * @date 2022-07-05
+	 */
+	void bevelMove(const CPoint &goal, CFishInfo &fish, CFishAction &action);
+
+	/**
+	 * @brief æ°´æ± åŒºåŸŸåˆ’åˆ†
 	 */
 	enum Region {
-		Empty  = 0b00000000, /// Î´ÖªÇøÓò
-		Upper  = 0b00000001, /// ÉÏ°ëÆ½Ãæ
-		Lower  = 0b00000010, /// ÏÂ°ëÆ½Ãæ
-		Left   = 0b00000100, /// ×óÈı·ÖÆ½Ãæ
-		Middle = 0b00001000, /// ÖĞÈı·ÖÆ½Ãæ
-		Right  = 0b00010000, /// ÓÒÈı·ÖÆ½Ãæ
-		UL = Upper | Left,   /// ×óÉÏÇøÓò
-		UM = Upper | Middle, /// ÖĞÉÏÇøÓò
-		UR = Upper | Right,  /// ÓÒÉÏÇøÓò
-		LL = Lower | Left,   /// ×óÏÂÇøÓò
-		LM = Lower | Middle, /// ÖĞÏÂÇøÓò
-		LR = Lower | Right,  /// ÓÒÏÂÇøÓò
+		Empty  = 0b00000000, /// æœªçŸ¥åŒºåŸŸ
+		Upper  = 0b00000001, /// ä¸ŠåŠå¹³é¢
+		Lower  = 0b00000010, /// ä¸‹åŠå¹³é¢
+		Left   = 0b00000100, /// å·¦ä¸‰åˆ†å¹³é¢
+		Middle = 0b00001000, /// ä¸­ä¸‰åˆ†å¹³é¢
+		Right  = 0b00010000, /// å³ä¸‰åˆ†å¹³é¢
+		UL = Upper | Left,   /// å·¦ä¸ŠåŒºåŸŸ
+		UM = Upper | Middle, /// ä¸­ä¸ŠåŒºåŸŸ
+		UR = Upper | Right,  /// å³ä¸ŠåŒºåŸŸ
+		LL = Lower | Left,   /// å·¦ä¸‹åŒºåŸŸ
+		LM = Lower | Middle, /// ä¸­ä¸‹åŒºåŸŸ
+		LR = Lower | Right,  /// å³ä¸‹åŒºåŸŸ
 	};
 
 	/**
-	 * @brief ÇøÓòÅĞ¶¨
-	 * @param pos ´ıÅĞ¶¨µÄµãÎ»
-	 * @return ËùÊôÇøÓòµÄRegion±êÖ¾
+	 * @brief åŒºåŸŸåˆ¤å®š
+	 * @param pos å¾…åˆ¤å®šçš„ç‚¹ä½
+	 * @return æ‰€å±åŒºåŸŸçš„Regionæ ‡å¿—
 	 */
 	Region regionPredict(const CPoint &pos) const;
 
 protected:
 	/**
-	 * @brief ²ßÂÔ½×¶Î»®·Ö
-	 * @note ²ßÂÔ»®·ÖÎªÈı¸öĞ¡½×¶Î²ßÂÔÖ´ĞĞ£¬Èı¸ö½×¶ÎÓÉÏÂÁĞ²ßÂÔ
-	 *  º¯Êı¾ßÌåÃèÊö¡£
+	 * @brief ç­–ç•¥é˜¶æ®µåˆ’åˆ†
+	 * @note ç­–ç•¥åˆ’åˆ†ä¸ºä¸‰ä¸ªå°é˜¶æ®µç­–ç•¥æ‰§è¡Œï¼Œä¸‰ä¸ªé˜¶æ®µç”±ä¸‹åˆ—ç­–ç•¥
+	 *  å‡½æ•°å…·ä½“æè¿°ã€‚
 	 */
 	enum class Phase { Stage_1st, Stage_2nd, Stage_3rd };
 
 	/**
-	 * @brief ½×¶ÎÔ¤²â
-	 * @note ¾ßÌåÖ´ĞĞµÄ²ßÂÔ½«ÒÀ¾İ¸Ã·½·¨½øĞĞ·Ö·¢µ÷ÓÃ¡£
-	 * @return µ±Ç°Ó¦µ±Ö´ĞĞµÄ²ßÂÔ½×¶Î
+	 * @brief é˜¶æ®µé¢„æµ‹
+	 * @note å…·ä½“æ‰§è¡Œçš„ç­–ç•¥å°†ä¾æ®è¯¥æ–¹æ³•è¿›è¡Œåˆ†å‘è°ƒç”¨ã€‚
+	 * @return å½“å‰åº”å½“æ‰§è¡Œçš„ç­–ç•¥é˜¶æ®µ
 	 */
-	Phase phasePredict() const;
+	Phase phasePredict(
+		const CPoint &a_pos,
+		const CPoint &b_pos,
+		const CPoint &ball_pos) const;
 
 	/**
-	 * @brief µÚÒ»½×¶Î²ßÂÔ
-	 * @note AÓã¶¥¿ªÇòÃÅ½øÈëÏÂÆ½ÃæÇø²¢±£Ö¤BÓãÓĞ×ã¹»»î¶¯¿Õ¼ä£¬
-	 *  Î¬»¤Ë®ÇòµÄÎÈ¶¨Î»ÖÃÓ¦ÔÚ´Ë½×¶Î½øĞĞ£¬Í¬Ê±BÓãÓ¦µ±±£Ö¤A½ø¡¢
-	 *  ÈëÏÂÆ½ÃæµÄ¹ı³ÌÖĞÓĞ×ã¹»µÄ»î¶¯¿Õ¼ä¡£
+	 * @brief ç¬¬ä¸€é˜¶æ®µç­–ç•¥
+	 * @note Aé±¼é¡¶å¼€çƒé—¨è¿›å…¥ä¸‹å¹³é¢åŒºå¹¶ä¿è¯Bé±¼æœ‰è¶³å¤Ÿæ´»åŠ¨ç©ºé—´ï¼Œ
+	 *  ç»´æŠ¤æ°´çƒçš„ç¨³å®šä½ç½®åº”åœ¨æ­¤é˜¶æ®µè¿›è¡Œï¼ŒåŒæ—¶Bé±¼åº”å½“ä¿è¯Aè¿›ã€
+	 *  å…¥ä¸‹å¹³é¢çš„è¿‡ç¨‹ä¸­æœ‰è¶³å¤Ÿçš„æ´»åŠ¨ç©ºé—´ã€‚
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
-	void StageInstruct_1st(RefArray<CFishAction> aAction);
+	void StageInstruct_1st(
+		CFishInfo &fish_a, CFishAction &action_a,
+		CFishInfo &fish_b, CFishAction &action_b,
+		CBallInfo &ball);
 
 	/**
-	 * @brief µÚ¶ş½×¶Î²ßÂÔ
-	 * @note ´ËÊ±AÓãÒÑ¾­½øÈëÏÂÆ½Ãæ£¬BÓã¿ªÊ¼¶¥Çò´ÓÒ»ºÅÃÅ½«Çò
-	 *  ËÍÈëÉÏÆ½Ãæ²¢¼ÌĞøËÍÍù¶şºÅÃÅ×óÉÏ·½£»Í¬Ê±AÓã¼ÌĞøÏò¶şºÅ
-	 *  ÃÅÒÆ¶¯£¬¶¥¿ªÇòÃÅÔÚË®³ØÓÒÉÏ½ÇµÈ´ı¡£ÖØµã×¢ÒâAÓãÓëBÓãµÄ
-	 *  ÈÎÎñÍê³ÉÍ¬²½ÂÊ¡£
+	 * @brief ç¬¬äºŒé˜¶æ®µç­–ç•¥
+	 * @note æ­¤æ—¶Aé±¼å·²ç»è¿›å…¥ä¸‹å¹³é¢ï¼ŒBé±¼å¼€å§‹é¡¶çƒä»ä¸€å·é—¨å°†çƒ
+	 *  é€å…¥ä¸Šå¹³é¢å¹¶ç»§ç»­é€å¾€äºŒå·é—¨å·¦ä¸Šæ–¹ï¼›åŒæ—¶Aé±¼ç»§ç»­å‘äºŒå·
+	 *  é—¨ç§»åŠ¨ï¼Œé¡¶å¼€çƒé—¨åœ¨æ°´æ± å³ä¸Šè§’ç­‰å¾…ã€‚é‡ç‚¹æ³¨æ„Aé±¼ä¸Bé±¼çš„
+	 *  ä»»åŠ¡å®ŒæˆåŒæ­¥ç‡ã€‚
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
-	void StageInstruct_2nd(RefArray<CFishAction> aAction);
+	void StageInstruct_2nd(
+		CFishInfo &fish_a, CFishAction &action_a,
+		CFishInfo &fish_b, CFishAction &action_b,
+		CBallInfo &ball);
 
 	/**
-	 * @brief µÚÈı½×¶Î²ßÂÔ
-	 * @note AÓãÒÑ¾­¶¥¿ªÇòÃÅ½øÈëÉÏÆ½ÃæÓÒÉÏ½ÇµÈ´ı£¬BÓã½«ÇòËÍÍù
-	 *  ÏÂÆ½Ãæ²¢×¼±¸ÉäÃÅ£¬Í¬Ê±AÓãµÈ´ıBÓãËÍÇòÍê³É²¢¶Â×¡¶şºÅÃÅ¡£
+	 * @brief ç¬¬ä¸‰é˜¶æ®µç­–ç•¥
+	 * @note Aé±¼å·²ç»é¡¶å¼€çƒé—¨è¿›å…¥ä¸Šå¹³é¢å³ä¸Šè§’ç­‰å¾…ï¼ŒBé±¼å°†çƒé€å¾€
+	 *  ä¸‹å¹³é¢å¹¶å‡†å¤‡å°„é—¨ï¼ŒåŒæ—¶Aé±¼ç­‰å¾…Bé±¼é€çƒå®Œæˆå¹¶å µä½äºŒå·é—¨ã€‚
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
-	void StageInstruct_3rd(RefArray<CFishAction> aAction);
+	void StageInstruct_3rd(
+		CFishInfo &fish_a, CFishAction &action_a,
+		CFishInfo &fish_b, CFishAction &action_b,
+		CBallInfo &ball);
 
 protected:
 	/**
-	 * @brief ³¡µØ³õÊ¼»¯
-	 * @note ·½·¨½«µÈ´ıÍ¨µÀ£¨ÃÅ¿¨£©Éè¶¨Íê±Ï²¢³õÊ¼»¯³¡µØĞÅÏ¢£¬
-	 *  µÈ´ıµÄ½áÊøÌõ¼şÎªÃÅ1¡¢ÃÅ2¡¢ÇòÃÅÎ»ÖÃ½ÔÉè¶¨Íê±Ï¡£
-	 * @return ÊÇ·ñÍê³É³õÊ¼»¯
+	 * @brief åœºåœ°åˆå§‹åŒ–
+	 * @note æ–¹æ³•å°†ç­‰å¾…é€šé“ï¼ˆé—¨å¡ï¼‰è®¾å®šå®Œæ¯•å¹¶åˆå§‹åŒ–åœºåœ°ä¿¡æ¯ï¼Œ
+	 *  ç­‰å¾…çš„ç»“æŸæ¡ä»¶ä¸ºé—¨1ã€é—¨2ã€çƒé—¨ä½ç½®çš†è®¾å®šå®Œæ¯•ä¸”å®Œæˆé±¼
+	 *  å’Œæ°´çƒçš„åˆå§‹æ ‡å®šã€‚
+	 * @return æ˜¯å¦å®Œæˆåˆå§‹åŒ–
 	 */
-	bool init(const RefArray<CHANNEL> &aChannel);
+	bool init(
+		const RefArray<CFishInfo> &aFish,
+		const RefArray<CBallInfo> &aBallinfo,
+		const RefArray<CHANNEL>   &aChannel);
 
 	/**
-	 * @brief ×·×Ù²¢¸üĞÂ±¸·İÊµÎïÓãÓëË®ÇòĞÅÏ¢
-	 * @note ¸Ãº¯Êı½«¶Ô´«²ÎµÄÓĞĞ§ĞÔ½øĞĞ¼ì²â£¬¶ÔÓÚÎŞĞ§ĞÅÏ¢Ëù
-	 *  ÊôµÄ³ÉÔ±½«ÀûÓÃÄ£Äâ¼ÆËã½øĞĞÊı¾İµÄ¸üĞÂ¡£
-	 * @param aAction Ô­Ê¼¶¯×÷ÁĞ±í
-	 * @param aFish Ô­Ê¼ÓãĞÅÏ¢ÁĞ±í
-	 * @param aBallinfo Ô­Ê¼Ë®ÇòĞÅÏ¢ÁĞ±í
-	 * @return ÊÇ·ñÓ¦ÓÃÄ£Äâ¼ÆËã
+	 * @brief è¿½è¸ªå¹¶æ›´æ–°å¤‡ä»½å®ç‰©é±¼ä¸æ°´çƒä¿¡æ¯
+	 * @note è¯¥å‡½æ•°å°†å¯¹ä¼ å‚çš„æœ‰æ•ˆæ€§è¿›è¡Œæ£€æµ‹ï¼Œå¯¹äºæ— æ•ˆä¿¡æ¯æ‰€
+	 *  å±çš„æˆå‘˜å°†åˆ©ç”¨æ¨¡æ‹Ÿè®¡ç®—è¿›è¡Œæ•°æ®çš„æ›´æ–°ã€‚
+	 * @return æ˜¯å¦åº”ç”¨æ¨¡æ‹Ÿè®¡ç®—
 	 */
 	bool trackAndUpdate(
-		const RefArray<CFishAction> &aAction,
-		const RefArray<CFishInfo>   &aFish,
-		const RefArray<CBallInfo>   &aBallinfo);
+		CFishInfo &fish_a, CFishAction &action_a,
+		CFishInfo &fish_b, CFishAction &action_b,
+		CBallInfo &ball);
 
 private:
 	/**
-	 * @brief ÊÇ·ñÍê³É³õÊ¼»¯
-	 * @note ËùÓĞ²Ù×÷¶¼Ó¦ÔÚ³õÊ¼»¯Íê³ÉÖ®ºó½øĞĞ
+	 * @brief æ˜¯å¦å®Œæˆåˆå§‹åŒ–
+	 * @note æ‰€æœ‰æ“ä½œéƒ½åº”åœ¨åˆå§‹åŒ–å®Œæˆä¹‹åè¿›è¡Œ
 	 */
 	bool initialized_;
 
 	/**
-	 * @brief Ë®³Ø¿í¸ß
+	 * @brief æ°´æ± å®½é«˜
 	 */
 	int width_, height_;
 
 	/**
-	 * @brief Èı¸öÇòÃÅµÄÖĞĞÄÎ»ÖÃ
+	 * @brief ä¸‰ä¸ªçƒé—¨çš„ä¸­å¿ƒä½ç½®
 	 */
 	CPoint door_center_[3];
 
-	/**
-	 * @brief ÊµÎïÓãĞÅÏ¢ÊµÊ±±¸·İ
-	 * @note µ±±ê¶¨¶ªÊ§Ê±£¬¸ÃĞÅÏ¢½«ÓÃÓÚÄ£Äâ¼ÆËã
-	 */
-	CFishInfo fish_[2];
-
-	/**
-	 * @brief Ë®ÇòĞÅÏ¢ÊµÊ±±¸·İ
-	 * @note µ±±ê¶¨¶ªÊ§Ê±£¬¸ÃĞÅÏ¢½«ÓÃÓÚÄ£Äâ¼ÆËã
-	 */
-	CBallInfo ball_;
+	const int index_[3] = {
+		0, /// Aé±¼ç´¢å¼•
+		1, /// Bé±¼ç´¢å¼•
+		0, /// æ°´çƒç´¢å¼•
+	};
 };

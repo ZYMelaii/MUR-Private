@@ -5,12 +5,10 @@
  */
 
 #include "./official/strategyhelper.h"
-#include "./svrpipe.h"
 
-#include "./strategy/statusviewer.h"
-#include "./strategy/test_pt2measure.h"
 #include "./strategy/smoothtargeting.h"
 #include "./strategy/cooperativeballpassing.h"
+
 
 static int g_enable_which = 1;
 
@@ -18,7 +16,7 @@ BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObst
     clear();
 
     auto wrap = [&](CStrategy *self, bool deleteLater = false) {
-        return [&] {
+        return [&, self, deleteLater] {
             self->Strategy(aAction, aFish, aBallinfo, aObstacle, aChannel);
             if (deleteLater) {
                 delete self;
@@ -27,9 +25,9 @@ BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObst
     };
 
     static auto strategy = new CooperativeBallPassing(OriginImage->width, OriginImage->height);
-    
-    wrap(new StatusViewer, true)();
-    wrap(new TEST_Pt2Measure, true)();
+
+    // wrap(new StatusViewer, true)();
+    // wrap(new TEST_Pt2Measure, true)();
 
     switch (g_enable_which) {
         case 0:

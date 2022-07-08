@@ -30,3 +30,19 @@
 *.exe
 *.out
 *.app
+
+# Others
+*.tlog
+*.rule
+*.vcxproj*
+*.recipe
+*.ilk
+*.pdb
+*.ninja*
+*cmake*
+*.exp
+*.ipch
+*.sln
+*.VC.db
+*.json
+*.suo

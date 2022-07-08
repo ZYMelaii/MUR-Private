@@ -20,7 +20,7 @@
 #include "../official/ballinfo.h"
 #include "../official/fishaction.h"
 #include "../official/fishinfo.h"
-#include "../refarray.hpp"
+#include "../refarray.h"
 
 /**
  * @brief 机器鱼策略控制算法类

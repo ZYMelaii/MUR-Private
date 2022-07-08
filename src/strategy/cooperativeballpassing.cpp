@@ -5,8 +5,8 @@
 CooperativeBallPassing::CooperativeBallPassing(int width, int height) :
     initialized_(false), width_(width), height_(height) {
     /**
-     * @note Ïà¹ØĞÅÏ¢³õÊ¼½Ô±»Éè¶¨Îª¿ÉÅĞ¶¨µÄÎŞĞ§Á¿£¬ÏÂÃæ¸ø³ö
-     *  Êı¾İÎŞĞ§µÄÅĞ¶¨£º
+     * @note ç›¸å…³ä¿¡æ¯åˆå§‹çš†è¢«è®¾å®šä¸ºå¯åˆ¤å®šçš„æ— æ•ˆé‡ï¼Œä¸‹é¢ç»™å‡º
+     *  æ•°æ®æ— æ•ˆçš„åˆ¤å®šï¼š
      *  fish_[*].centerPos() == CPoint(CFishInfo::nil, CFishInfo::nil)
      *  fish_[*].centerPos() == CPoint(-1, -1)
      *  ball_.getCenter() == CPoint(-1, -1)
@@ -16,7 +16,25 @@ CooperativeBallPassing::CooperativeBallPassing(int width, int height) :
 
 void CooperativeBallPassing::stableHoverInstruct(CFishInfo &fish, CFishAction &action) {
     if (!initialized_) return;
-    // TODO
+    action.speed = 1;
+    action.direction = 12;
+    fish.updateAction(action);
+}
+
+void CooperativeBallPassing::bevelMove(const CPoint &goal, CFishInfo &fish, CFishAction &action) {
+    //! é»˜è®¤å…ˆæŒ‰åœ¨è¿åŠ¨æ–¹å‘å·¦ä¾§å¤„ç†
+    const auto delta = normalizeAngle(
+        getVecAngle(fish.centerPos(), fish.headerPos()) - 
+        getVecAngle(fish.centerPos(), goal)) / M_PI * 180;
+    const auto distance = getDistance(goal, fish.headerPos());
+
+    if (delta < 15) {
+        action.direction = 7;
+        action.speed = 7;
+        return;
+    }
+
+    action.direction = 9;
 }
 
 CooperativeBallPassing::Region CooperativeBallPassing::regionPredict(const CPoint &pos) const {
@@ -26,12 +44,13 @@ CooperativeBallPassing::Region CooperativeBallPassing::regionPredict(const CPoin
     return static_cast<Region>(flag);
 }
 
-CooperativeBallPassing::Phase CooperativeBallPassing::phasePredict() const {
-    const auto reg_1 = regionPredict(fish_[0].centerPos());
-    const auto reg_2 = regionPredict(fish_[1].centerPos());
+CooperativeBallPassing::Phase CooperativeBallPassing::phasePredict(
+    const CPoint &a_pos, const CPoint &b_pos, const CPoint &ball_pos) const {
+    const auto reg_1 = regionPredict(a_pos);
+    const auto reg_2 = regionPredict(b_pos);
 
-    std::cout << "[INFO] AÓãËù´¦ÇøÓò£ºbin(" << std::bitset<8>(reg_1) << ")\n";
-    std::cout << "[INFO] BÓãËù´¦ÇøÓò£ºbin(" << std::bitset<8>(reg_2) << ")\n";
+    std::cout << "[INFO] Aé±¼æ‰€å¤„åŒºåŸŸï¼šbin(" << std::bitset<8>(reg_1) << ")\n";
+    std::cout << "[INFO] Bé±¼æ‰€å¤„åŒºåŸŸï¼šbin(" << std::bitset<8>(reg_2) << ")\n";
     std::cout << std::flush;
 
     if ((reg_1 & Region::Left) && reg_2 == Region::LL) {
@@ -43,44 +62,55 @@ CooperativeBallPassing::Phase CooperativeBallPassing::phasePredict() const {
     }
 }
 
-void CooperativeBallPassing::StageInstruct_1st(RefArray<CFishAction> aAction) {
-    puts("[INFO] ÕıÔÚÖ´ĞĞµÚÒ»½×¶Î²ßÂÔ");
+void CooperativeBallPassing::StageInstruct_1st(
+    CFishInfo &fish_a, CFishAction &action_a,
+    CFishInfo &fish_b, CFishAction &action_b,
+    CBallInfo &ball) {
+    puts("[INFO] æ­£åœ¨æ‰§è¡Œç¬¬ä¸€é˜¶æ®µç­–ç•¥");
 
     const auto threshold = getDistance(door_center_[0],
         CPoint(width_ / 7, height_ * 2 / 6));
-    const auto distance = getDistance(fish_[0].headerPos(), door_center_[0]);
+    const auto distance = getDistance(fish_a.headerPos(), door_center_[0]);
 
     /**
-     * @note AÓãÈı¶ÎĞĞ¾¶£¬ÏÈ½Ó½üÒ»ºÅÃÅÉÏ·½£¬ºó½Ó½üÒ»ºÅÃÅ£¬×îºó´©ÃÅ¹ıµ½´ïÏÂÇøÓò
+     * @note Aé±¼ä¸‰æ®µè¡Œå¾„ï¼Œå…ˆæ¥è¿‘ä¸€å·é—¨ä¸Šæ–¹ï¼Œåæ¥è¿‘ä¸€å·é—¨ï¼Œæœ€åç©¿é—¨è¿‡åˆ°è¾¾ä¸‹åŒºåŸŸ
      */
-    if ((regionPredict(fish_[0].headerPos()) & Region::Lower) || distance < threshold * 0.3) {
+    if ((regionPredict(fish_a.headerPos()) & Region::Lower) || distance < threshold * 0.3) {
         auto goal = CPoint(door_center_[0].x, door_center_[0].y + height_ / 4);
-        aAction[0].speed = 7;
-        spinP2PMove(goal, fish_[0], aAction[0]);
+        fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
+        action_a.speed = 7;
+        spinP2PMove(fish_a.targetPos(), fish_a, action_a);
     } else if (distance < threshold * 0.6) {
-        aAction[0].speed = 6;
-        spinP2PMove(door_center_[0], fish_[0], aAction[0]);
+        auto goal = door_center_[0];
+        fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
+        action_a.speed = 6;
+        spinP2PMove(fish_a.targetPos(), fish_a, action_a);
     } else {
-        aAction[0].speed = 5;
         auto goal = CPoint(door_center_[0].x - width_ / 7, door_center_[0].y - height_ / 6);
-        spinP2PMove(goal, fish_[0], aAction[0]);
+        fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
+        action_a.speed = 5;
+        spinP2PMove(fish_a.targetPos(), fish_a, action_a);
     }
 
     /**
-     * @note BÓãÏÈÍ£ÁôÔÚË®³Ø×óÏÂ½ÇÂä
-     * @note Ò»µµËÙ¶ÈÓÒÁù·½ÏòµµÎ»ÓĞ½ÏºÃµÄÎÈ¶¨ĞÔ
+     * @note Bé±¼å…ˆåœç•™åœ¨æ°´æ± å·¦ä¸‹è§’è½
+     * @note ä¸€æ¡£é€Ÿåº¦å³å…­æ–¹å‘æ¡£ä½æœ‰è¾ƒå¥½çš„ç¨³å®šæ€§
      */
-    aAction[1].speed = 1;
-    aAction[1].direction = 12;
-    // spinP2PMove(CPoint(0, height_), fish_[1], aAction[1]);
+    stableHoverInstruct(fish_b, action_b);
 }
 
-void CooperativeBallPassing::StageInstruct_2nd(RefArray<CFishAction> aAction) {
-    puts("[INFO] ÕıÔÚÖ´ĞĞµÚ¶ş½×¶Î²ßÂÔ");
+void CooperativeBallPassing::StageInstruct_2nd(
+    CFishInfo &fish_a, CFishAction &action_a,
+    CFishInfo &fish_b, CFishAction &action_b,
+    CBallInfo &ball) {
+    puts("[INFO] æ­£åœ¨æ‰§è¡Œç¬¬äºŒé˜¶æ®µç­–ç•¥");
 }
 
-void CooperativeBallPassing::StageInstruct_3rd(RefArray<CFishAction> aAction) {
-    puts("[INFO] ÕıÔÚÖ´ĞĞµÚÈı½×¶Î²ßÂÔ");
+void CooperativeBallPassing::StageInstruct_3rd(
+    CFishInfo &fish_a, CFishAction &action_a,
+    CFishInfo &fish_b, CFishAction &action_b,
+    CBallInfo &ball) {
+    puts("[INFO] æ­£åœ¨æ‰§è¡Œç¬¬ä¸‰é˜¶æ®µç­–ç•¥");
 }
 
 bool CooperativeBallPassing::Strategy(
@@ -90,53 +120,78 @@ bool CooperativeBallPassing::Strategy(
     RefArray<OBSTAINFO>   aObstacle,
     RefArray<CHANNEL>     aChannel) {
     /**
-     * @note Î´³õÊ¼»¯Íê³É£¬µÈ´ıÇòÃÅ±ê¶¨¡£
+     * @note æœªåˆå§‹åŒ–å®Œæˆï¼Œç­‰å¾…çƒé—¨æ ‡å®šã€‚
      */
-    if (!init(aChannel)) return false;
+    if (!init(aFish, aBallinfo, aChannel)) return false;
+
+    auto &fish_a = aFish[index_[0]];
+    auto &fish_b = aFish[index_[1]];
+    auto &action_a = aAction[index_[0]];
+    auto &action_b = aAction[index_[1]];
+    auto &ball = aBallinfo[index_[2]];
 
     /**
-     * @note µ±±ê¶¨¶ªÊ§Ê±£¬²»ÔÙĞÅÀµÊÓ¾õÊ¶±ğĞÅÏ¢
-     * @note Ä£Äâ¼ÆËãĞĞÎª´ıÊµÏÖ
+     * @note å½“æ ‡å®šä¸¢å¤±æ—¶ï¼Œä¸å†ä¿¡èµ–è§†è§‰è¯†åˆ«ä¿¡æ¯
+     * @note æ¨¡æ‹Ÿè®¡ç®—è¡Œä¸ºå¾…å®ç°
      */
-    trackAndUpdate(aAction, aFish, aBallinfo);
+    trackAndUpdate(fish_a, action_a, fish_b, action_b, ball);
 
-    std::cout << fish_[0] << "\n" << aAction[0] << "\n";
-    std::cout << fish_[1] << "\n" << aAction[1] << "\n";
-    std::cout << ball_ << "\n";
+    std::cout << fish_a << "\n" << action_a << "\n";
+    std::cout << fish_b << "\n" << action_b << "\n";
+    std::cout << ball << "\n";
     std::cout << std::flush;
 
-    switch (phasePredict()) {
+    {   // TEST
+        //! æ…¢é€Ÿæ‚¬åœ
+        // stableHoverInstruct(fish_a, action_a);
+        //! æ–œè§’ç§»åŠ¨ï¼šç¬¬ä¸€æ­¥ç©¿é—¨
+        bevelMove(door_center_[0], fish_a, action_a);
+        return false;
+    }
+
+
+    switch (phasePredict(fish_a.centerPos(), fish_b.centerPos(), ball.getCenter())) {
         case Phase::Stage_1st:
-            StageInstruct_1st(aAction);
+            StageInstruct_1st(fish_a, action_a, fish_b, action_b, ball);
         break;
         case Phase::Stage_2nd:
-            StageInstruct_2nd(aAction);
+            StageInstruct_2nd(fish_a, action_a, fish_b, action_b, ball);
         break;
         case Phase::Stage_3rd:
-            StageInstruct_3rd(aAction);
+            StageInstruct_3rd(fish_a, action_a, fish_b, action_b, ball);
         break;
     }
 
     return true;
 }
 
-bool CooperativeBallPassing::init(const RefArray<CHANNEL> &aChannel) {
+bool CooperativeBallPassing::init(
+    const RefArray<CFishInfo> &aFish,
+    const RefArray<CBallInfo> &aBallinfo,
+    const RefArray<CHANNEL>   &aChannel) {
     /**
-     * @note ³õÊ¼»¯ÒÑ¾­Íê³É
+     * @note åˆå§‹åŒ–å·²ç»å®Œæˆ
      */
     if (initialized_) return true;
 
     /**
-     * @note Î´Ö¸¶¨Èı¸öÇòÃÅµÄ×ø±ê£¬µÈ´ı±ê¶¨£»
-     *  µ±±ê¶¨Î»ÖÃ´óÓÚÈıÊ±£¬¼Ù¶¨´æÔÚ´íÎó±ê¶¨£¬¼ÌĞøµÈ´ı¡£
+     * @note ç­‰å¾…é±¼å’Œæ°´çƒæ ‡å®šå®Œæˆ
+     */
+    if (aFish[index_[0]].centerPos() == CPoint(-1, -1)) return false;
+    if (aFish[index_[1]].centerPos() == CPoint(-1, -1)) return false;
+    if (aBallinfo[index_[2]].getCenter() == CPoint(-1, -1)) return false;
+
+    /**
+     * @note æœªæŒ‡å®šä¸‰ä¸ªçƒé—¨çš„åæ ‡ï¼Œç­‰å¾…æ ‡å®šï¼›
+     *  å½“æ ‡å®šä½ç½®å¤§äºä¸‰æ—¶ï¼Œå‡å®šå­˜åœ¨é”™è¯¯æ ‡å®šï¼Œç»§ç»­ç­‰å¾…ã€‚
      */
     if (aChannel.size() != 3) return false;
 
     /**
-     * @note door_center_Èı¸ö×ø±ê·Ö±ğ¶ÔÓ¦Èı¸öÇòÃÅÖĞĞÄ£¬
-     *  Æäºá×ø±êÓ¦µ±ÊÇµİÔöµÄ£¬ÎªÁË·ÀÖ¹±ê¶¨Ê±µÄ´íÎó£¬´Ë
-     *  ´Ë´¦×ö³ö¶îÍâµ÷Õû¡£
-     * @note ²Î¿¼×ø±ê£º(220,236)¡¢(474,240)¡¢(600,280)
+     * @note door_center_ä¸‰ä¸ªåæ ‡åˆ†åˆ«å¯¹åº”ä¸‰ä¸ªçƒé—¨ä¸­å¿ƒï¼Œ
+     *  å…¶æ¨ªåæ ‡åº”å½“æ˜¯é€’å¢çš„ï¼Œä¸ºäº†é˜²æ­¢æ ‡å®šæ—¶çš„é”™è¯¯ï¼Œæ­¤
+     *  æ­¤å¤„åšå‡ºé¢å¤–è°ƒæ•´ã€‚
+     * @note å‚è€ƒåæ ‡ï¼š(220,236)ã€(474,240)ã€(600,280)
      */
 
     int door_id[3] = {0, 1, 2};
@@ -166,75 +221,29 @@ bool CooperativeBallPassing::init(const RefArray<CHANNEL> &aChannel) {
 }
 
 bool CooperativeBallPassing::trackAndUpdate(
-    const RefArray<CFishAction> &aAction,
-    const RefArray<CFishInfo>   &aFish,
-    const RefArray<CBallInfo>   &aBallinfo) {
+    CFishInfo &fish_a, CFishAction &action_a,
+    CFishInfo &fish_b, CFishAction &action_b,
+    CBallInfo &ball) {
     /**
-     * @brief A¡¢BÓãµÄ±àºÅÓëË®ÇòµÄ±àºÅ
-     * @note Ğ­×÷¶¥Çò·Ç¾º¼¼ÀàÏîÄ¿£¬Óã¿ÉÒÔ¶¼¹éÎª¼º¶Ó¡£ÆäÖĞ¼º·½
-     *  ¶ÓÎéÓãĞÅÏ¢Ë÷ÒıÔÚ{0...7}£¬Ë÷ÒıÎªiµÄÓã±àºÅÎªi+1¡£ÓãµÄ¶¯
-     *  ×÷ÓëÓãµÄĞÅÏ¢Í¬Ë÷ÒıÒ»Ò»¶ÔÓ¦¡£
-     * @note ±àºÅÎªiµÄË®Çò¶ÔÓ¦ÓÚË®ÇòĞÅÏ¢ÁĞ±íË÷ÒıÎªi-1µÄÎ»ÖÃ¡£
+     * @brief Aã€Bé±¼çš„ç¼–å·ä¸æ°´çƒçš„ç¼–å·
+     * @note åä½œé¡¶çƒéç«æŠ€ç±»é¡¹ç›®ï¼Œé±¼å¯ä»¥éƒ½å½’ä¸ºå·±é˜Ÿã€‚å…¶ä¸­å·±æ–¹
+     *  é˜Ÿä¼é±¼ä¿¡æ¯ç´¢å¼•åœ¨{0...7}ï¼Œç´¢å¼•ä¸ºiçš„é±¼ç¼–å·ä¸ºi+1ã€‚é±¼çš„åŠ¨
+     *  ä½œä¸é±¼çš„ä¿¡æ¯åŒç´¢å¼•ä¸€ä¸€å¯¹åº”ã€‚
+     * @note ç¼–å·ä¸ºiçš„æ°´çƒå¯¹åº”äºæ°´çƒä¿¡æ¯åˆ—è¡¨ç´¢å¼•ä¸ºi-1çš„ä½ç½®ã€‚
      */
 
-    const int fish_A_id = 1, fish_B_id = 2;
-    const int ball_id = 1;
-    const auto nilFishPos = CPoint(CFishInfo::nil, CFishInfo::nil);
-    const auto nilBallPos = CPoint(-1, -1);
-
-    int fish_index[2] = {-1, -1};
-    int ball_index = -1;
-
     /**
-     * @note Ğ£Ñé¶ÔË®ÇòÓëÓãµÄ×·×ÙÊÇ·ñÓĞĞ§
+     * @note æ ¡éªŒå¯¹æ°´çƒä¸é±¼çš„è¿½è¸ªæ˜¯å¦æœ‰æ•ˆ
      */
 
-    if (aFish.size() > (fish_A_id - 1) &&
-        aFish[fish_A_id - 1].centerPos() != nilFishPos) {
-        fish_index[0] = fish_A_id - 1;
-    }
-
-    if (aFish.size() > (fish_B_id - 1) &&
-        aFish[fish_B_id - 1].centerPos() != nilFishPos) {
-        fish_index[1] = fish_B_id - 1;
-    }
-
-    if (aBallinfo.size() > (ball_id - 1) &&
-        aBallinfo[ball_id - 1].getCenter() != nilBallPos) {
-        ball_index = ball_id - 1;
-    }
+    // TODO
 
     /**
-     * @note ¸üĞÂÏà¹ØĞÅÏ¢
-     * @note ÈôĞÅÏ¢´¦ÓÚ³õÊ¼»¯½×¶ÎÎ´±»ÓĞĞ§»ñÈ¡£¬ÔòÉè¶¨ÎªÄ¬ÈÏÖµ
+     * @note æ›´æ–°ç›¸å…³ä¿¡æ¯
+     * @note è‹¥ä¿¡æ¯å¤„äºåˆå§‹åŒ–é˜¶æ®µæœªè¢«æœ‰æ•ˆè·å–ï¼Œåˆ™è®¾å®šä¸ºé»˜è®¤å€¼
      */
 
-    if (fish_index[0] != -1) {
-        fish_[0] = aFish[fish_index[0]];
-    } else if (fish_[0].centerPos() == nilFishPos) {
-        fish_[0].centerPos() = CPoint(width_ / 7, height_ * 2 / 6);
-    } else {
-        // TODO
-    }
+    // TODO
 
-    if (fish_index[1] != -1) {
-        fish_[1] = aFish[fish_index[1]];
-    } else if (fish_[1].centerPos() == nilFishPos) {
-        fish_[1].centerPos() = CPoint(width_ / 7, height_ * 4 / 6);
-    } else {
-        // TODO
-    }
-
-    if (ball_index != -1) {
-        ball_ = aBallinfo[ball_index];
-    } else if (ball_.getCenter() == nilBallPos) {
-        ball_.setProperty(CPoint(width_ * 2 / 7, height_ * 4 / 6), 128, 13);
-    } else {
-        // TODO
-    }
-
-    return
-        fish_index[0] == -1 ||
-        fish_index[1] == -1 ||
-        ball_index == -1;
+    return true;
 }

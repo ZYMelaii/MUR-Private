@@ -8,7 +8,7 @@ void ReportError() {
 	DWORD dwErrCode = GetLastError();
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 		NULL, dwErrCode, 0, (LPTSTR)&lpMessage, 0, NULL);
-	fprintf(stderr, "[ERROR] GetLastError(): %d -> %s\n", dwErrCode, lpMessage);
+	fprintf(stderr, "[ERROR] GetLastError(): %lu -> %s\n", dwErrCode, lpMessage);
 	LocalFree(lpMessage);
 }
 
