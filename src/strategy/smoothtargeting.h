@@ -48,8 +48,10 @@ public:
             // hitPoint.y += perp_pulse * sin(vec);
 
             //! 以鱼中心偏向鱼尾的坐标为基法向位移
-            hitPoint.x = fish.centerPos().x + perp_pulse * cos(vec) - (fish.headerPos().x - fish.centerPos().x) * 2;
-            hitPoint.y = fish.centerPos().y + perp_pulse * sin(vec) - (fish.headerPos().y - fish.centerPos().y) * 2;
+            hitPoint.x = static_cast<decltype(hitPoint.x)>(
+                fish.centerPos().x + perp_pulse * cos(vec) - (fish.headerPos().x - fish.centerPos().x) * 2);
+            hitPoint.y = static_cast<decltype(hitPoint.y)>(
+                fish.centerPos().y + perp_pulse * sin(vec) - (fish.headerPos().y - fish.centerPos().y) * 2);
         }
 
         //! 设定目标点

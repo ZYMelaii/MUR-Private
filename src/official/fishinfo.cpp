@@ -169,7 +169,7 @@ bool CFishInfo::calcInterPos(CFishAction& action, bool apply) {
         double result = normalizeAngle(
             getVecAngle(m_fHeaderP, m_fInterP) - m_fdirection) / M_PI * 180;
 
-        int nd = result / ((static_cast<int>(clamp(distance / 100, 0, 2) + 2)) * 5);
+        int nd = static_cast<int>(result / ((static_cast<int>(clamp(distance / 100, 0, 2) + 2)) * 5));
         action.direction = 7 + static_cast<int>(clamp(nd, -7, 7));
         action.speed = m_fCurrentAction.speed;
 
@@ -242,8 +242,10 @@ void CFishInfo::updateHeaderPos() {
      */
     const double ratio_x = REGBMP_WIDTH * 1.0 / POOL_WIDTH;
     const double ratio_y = REGBMP_HEIGHT * 1.0 / POOL_HEIGHT;
-    m_fHeaderP.x = m_fCenterP.x + HEADTOCENTER_DIS * cos(m_fdirection) * ratio_x;
-    m_fHeaderP.y = m_fCenterP.y + HEADTOCENTER_DIS * sin(m_fdirection) * ratio_y;
+    m_fHeaderP.x = static_cast<decltype(m_fHeaderP.x)>(
+        m_fCenterP.x + HEADTOCENTER_DIS * cos(m_fdirection) * ratio_x);
+    m_fHeaderP.y = static_cast<decltype(m_fHeaderP.y)>(
+        m_fCenterP.y + HEADTOCENTER_DIS * sin(m_fdirection) * ratio_y);
 }
 
 /**
@@ -261,8 +263,10 @@ void CFishInfo::updateJointPos() {
     const double ratio_x = REGBMP_WIDTH * 1.0 / POOL_WIDTH;
     const double ratio_y = REGBMP_HEIGHT * 1.0 / POOL_HEIGHT;
     m_fLastRotateP = m_fRotateP;
-    m_fRotateP.x = m_fCenterP.x  + ROTATETOCENTER_DIS * cos(m_fdirection) * ratio_x;
-    m_fRotateP.y = m_fCenterP.y  + ROTATETOCENTER_DIS * sin(m_fdirection) * ratio_y;
+    m_fRotateP.x = static_cast<decltype(m_fRotateP.x)>(
+        m_fCenterP.x  + ROTATETOCENTER_DIS * cos(m_fdirection) * ratio_x);
+    m_fRotateP.y = static_cast<decltype(m_fRotateP.y)>(
+        m_fCenterP.y  + ROTATETOCENTER_DIS * sin(m_fdirection) * ratio_y);
 }
 
 /**
@@ -285,8 +289,10 @@ void CFishInfo::updateVelocities() {
      */
     const double dt = m_ftime * TIMESTEP;
     CPoint displacement = m_fRotateP - m_fLastRotateP;
-    displacement.x *= POOL_WIDTH * 1.0 / REGBMP_WIDTH;
-    displacement.y *= POOL_HEIGHT * 1.0 / REGBMP_HEIGHT;
+    displacement.x = static_cast<decltype(displacement.x)>(
+        displacement.x * POOL_WIDTH * 1.0 / REGBMP_WIDTH);
+    displacement.y = static_cast<decltype(displacement.y)>(
+        displacement.y * POOL_HEIGHT * 1.0 / REGBMP_HEIGHT);
 
     m_fv = getDistance(CPoint(0, 0), displacement) / dt;
     m_fvdir = getVecAngle(m_fLastRotateP, m_fRotateP);

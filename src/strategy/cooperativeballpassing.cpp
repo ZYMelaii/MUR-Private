@@ -68,8 +68,7 @@ void CooperativeBallPassing::StageInstruct_1st(
     CBallInfo &ball) {
     puts("[INFO] 正在执行第一阶段策略");
 
-    const auto threshold = getDistance(door_center_[0],
-        CPoint(width_ / 7, height_ * 2 / 6));
+    const auto threshold = getDistance(door_center_[0], CPoint(width_ / 7, height_ * 2 / 6));
     const auto distance = getDistance(fish_a.headerPos(), door_center_[0]);
 
     /**
@@ -94,7 +93,6 @@ void CooperativeBallPassing::StageInstruct_1st(
 
     /**
      * @note B鱼先停留在水池左下角落
-     * @note 一档速度右六方向档位有较好的稳定性
      */
     stableHoverInstruct(fish_b, action_b);
 }
@@ -104,6 +102,8 @@ void CooperativeBallPassing::StageInstruct_2nd(
     CFishInfo &fish_b, CFishAction &action_b,
     CBallInfo &ball) {
     puts("[INFO] 正在执行第二阶段策略");
+
+
 }
 
 void CooperativeBallPassing::StageInstruct_3rd(
@@ -135,20 +135,6 @@ bool CooperativeBallPassing::Strategy(
      * @note 模拟计算行为待实现
      */
     trackAndUpdate(fish_a, action_a, fish_b, action_b, ball);
-
-    std::cout << fish_a << "\n" << action_a << "\n";
-    std::cout << fish_b << "\n" << action_b << "\n";
-    std::cout << ball << "\n";
-    std::cout << std::flush;
-
-    {   // TEST
-        //! 慢速悬停
-        // stableHoverInstruct(fish_a, action_a);
-        //! 斜角移动：第一步穿门
-        bevelMove(door_center_[0], fish_a, action_a);
-        return false;
-    }
-
 
     switch (phasePredict(fish_a.centerPos(), fish_b.centerPos(), ball.getCenter())) {
         case Phase::Stage_1st:

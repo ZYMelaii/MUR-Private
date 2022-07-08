@@ -52,7 +52,7 @@ void PipeServer::run() {
 					std::string content;
 					while (succeed && size != 0) {
 						DWORD read_bytes = 0;
-						succeed &= ReadFile(instance, buffer, 4096, &read_bytes, NULL);
+						succeed &= static_cast<bool>(ReadFile(instance, buffer, 4096, &read_bytes, NULL));
 						content.insert(content.size(), buffer, read_bytes);
 						size -= read_bytes;
 					}
@@ -109,10 +109,10 @@ bool PipeClient::request(const char *req, const void *content, size_t size) {
 		return false;
 	}
 	RequestHeader header;
-	strcpy(header.req, req);
+	strcpy_s(header.req, req);
 	header.content_length = size;
 	bool succeed = WriteFile(instance_, &header, sizeof(RequestHeader), nullptr, nullptr);
-	succeed &= WriteFile(instance_, content, size, nullptr, nullptr);
+	succeed &= static_cast<bool>(WriteFile(instance_, content, size, nullptr, nullptr));
 	return succeed;
 }
 

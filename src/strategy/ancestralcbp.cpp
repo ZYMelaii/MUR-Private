@@ -341,33 +341,33 @@ void AncestralCBP::movingshot1(int mode, CPoint aimpt, CFishAction &action,
 
     templeft0.y = aimpt.y;
     templeft0.x = aimpt.x - 70;
-    templeft0.x = clamp(templeft0.x, 0, REGBMP_WIDTH);
-    templeft0.y = clamp(templeft0.y, 0, REGBMP_HEIGHT);
+    templeft0.x = static_cast<LONG>(clamp(templeft0.x, 0, REGBMP_WIDTH));
+    templeft0.y = static_cast<LONG>(clamp(templeft0.y, 0, REGBMP_HEIGHT));
 
     templeft1.y = aimpt.y + 70;
     templeft1.x = aimpt.x - 50;
-    templeft1.x = clamp(templeft1.x, 0, REGBMP_WIDTH);
-    templeft1.y = clamp(templeft1.y, 0, REGBMP_HEIGHT);
+    templeft1.x = static_cast<LONG>(clamp(templeft1.x, 0, REGBMP_WIDTH));
+    templeft1.y = static_cast<LONG>(clamp(templeft1.y, 0, REGBMP_HEIGHT));
 
     templeft2.y = aimpt.y - 70;
     templeft2.x = aimpt.x - 50;
-    templeft2.x = clamp(templeft2.x, 0, REGBMP_WIDTH);
-    templeft2.y = clamp(templeft2.y, 0, REGBMP_HEIGHT);
+    templeft2.x = static_cast<LONG>(clamp(templeft2.x, 0, REGBMP_WIDTH));
+    templeft2.y = static_cast<LONG>(clamp(templeft2.y, 0, REGBMP_HEIGHT));
 
     tempright0.y = aimpt.y;
     tempright0.x = aimpt.x + 50;
-    tempright0.x = clamp(tempright0.x, 0, REGBMP_WIDTH);
-    tempright0.y = clamp(tempright0.y, 0, REGBMP_HEIGHT);
+    tempright0.x = static_cast<LONG>(clamp(tempright0.x, 0, REGBMP_WIDTH));
+    tempright0.y = static_cast<LONG>(clamp(tempright0.y, 0, REGBMP_HEIGHT));
 
     tempright1.y = aimpt.y + 70;
     tempright1.x = aimpt.x + 50;
-    tempright1.x = clamp(tempright1.x, 0, REGBMP_WIDTH);
-    tempright1.y = clamp(tempright1.y, 0, REGBMP_HEIGHT);
+    tempright1.x = static_cast<LONG>(clamp(tempright1.x, 0, REGBMP_WIDTH));
+    tempright1.y = static_cast<LONG>(clamp(tempright1.y, 0, REGBMP_HEIGHT));
 
     tempright2.y = aimpt.y - 70;
     tempright2.x = aimpt.x + 50;
-    tempright2.x = clamp(tempright2.x, 0, REGBMP_WIDTH);
-    tempright2.y = clamp(tempright2.y, 0, REGBMP_HEIGHT);
+    tempright2.x = static_cast<LONG>(clamp(tempright2.x, 0, REGBMP_WIDTH));
+    tempright2.y = static_cast<LONG>(clamp(tempright2.y, 0, REGBMP_HEIGHT));
 
     if (mode == 0) {
         if ((FishPt.y > aimpt.y + shopdistance && flag1 == 0 && flag2 == 0) ||
@@ -497,13 +497,13 @@ void AncestralCBP::movingshot2(int mode, CPoint aimpt, CFishAction &action,
 
     tempup0.x = aimpt.x;
     tempup0.y = aimpt.y - 50;
-    tempup0.x = clamp(tempup0.x, 0, REGBMP_WIDTH);
-    tempup0.y = clamp(tempup0.y, 0, REGBMP_HEIGHT);
+    tempup0.x = static_cast<LONG>(clamp(tempup0.x, 0, REGBMP_WIDTH));
+    tempup0.y = static_cast<LONG>(clamp(tempup0.y, 0, REGBMP_HEIGHT));
 
     tempup1.x = aimpt.x + 70;
     tempup1.y = aimpt.y - 50;
-    tempup1.x = clamp(tempup1.x, 0, REGBMP_WIDTH);
-    tempup1.y = clamp(tempup1.y, 0, REGBMP_HEIGHT);
+    tempup1.x = static_cast<LONG>(clamp(tempup1.x, 0, REGBMP_WIDTH));
+    tempup1.y = static_cast<LONG>(clamp(tempup1.y, 0, REGBMP_HEIGHT));
 
     tempup2.x = aimpt.x - 70;
     tempup2.y = aimpt.y - 50;
@@ -511,18 +511,18 @@ void AncestralCBP::movingshot2(int mode, CPoint aimpt, CFishAction &action,
         tempup2.x = aimpt.x - 90;
         tempup2.y = aimpt.y - 50;
     }
-    tempup2.x = clamp(tempup2.x, 0, REGBMP_WIDTH);
-    tempup2.y = clamp(tempup2.y, 0, REGBMP_HEIGHT);
+    tempup2.x = static_cast<LONG>(clamp(tempup2.x, 0, REGBMP_WIDTH));
+    tempup2.y = static_cast<LONG>(clamp(tempup2.y, 0, REGBMP_HEIGHT));
 
     tempdown0.x = aimpt.x;
     tempdown0.y = aimpt.y + 50;
-    tempdown0.x = clamp(tempdown0.x, 0, REGBMP_WIDTH);
-    tempdown0.y = clamp(tempdown0.y, 0, REGBMP_HEIGHT);
+    tempdown0.x = static_cast<LONG>(clamp(tempdown0.x, 0, REGBMP_WIDTH));
+    tempdown0.y = static_cast<LONG>(clamp(tempdown0.y, 0, REGBMP_HEIGHT));
 
     tempdown1.y = aimpt.y - 50;
     tempdown1.x = aimpt.x + 70;
-    tempdown1.x = clamp(tempdown1.x, 0, REGBMP_WIDTH);
-    tempdown1.y = clamp(tempdown1.y, 0, REGBMP_HEIGHT);
+    tempdown1.x = static_cast<LONG>(clamp(tempdown1.x, 0, REGBMP_WIDTH));
+    tempdown1.y = static_cast<LONG>(clamp(tempdown1.y, 0, REGBMP_HEIGHT));
 
     tempdown2.y = aimpt.y + 40;
     tempdown2.x = aimpt.x - 70;
@@ -530,8 +530,8 @@ void AncestralCBP::movingshot2(int mode, CPoint aimpt, CFishAction &action,
         tempdown2.y = aimpt.y + 50;
         tempdown2.x = aimpt.x - 90;
     }
-    tempdown2.x = clamp(tempdown2.x, 0, REGBMP_WIDTH);
-    tempdown2.y = clamp(tempdown2.y, 0, REGBMP_HEIGHT);
+    tempdown2.x = static_cast<LONG>(clamp(tempdown2.x, 0, REGBMP_WIDTH));
+    tempdown2.y = static_cast<LONG>(clamp(tempdown2.y, 0, REGBMP_HEIGHT));
 
     if (mode == 0) {
         if ((FishPt.x > aimpt.x + shopdistance && flag1 == 0 && flag4 == 0) ||
@@ -654,18 +654,18 @@ void AncestralCBP::movingshot3(int mode, CPoint aimpt, CFishAction &action,
 
     tempup0.x = aimpt.x + 70;
     tempup0.y = 160; //向最左面顶球的姿态调整点
-    tempup0.x = clamp(tempup0.x, 0, REGBMP_WIDTH);
-    tempup0.y = clamp(tempup0.y, 0, REGBMP_HEIGHT);
+    tempup0.x = static_cast<LONG>(clamp(tempup0.x, 0, REGBMP_WIDTH));
+    tempup0.y = static_cast<LONG>(clamp(tempup0.y, 0, REGBMP_HEIGHT));
 
     tempup1.x = 720;
     tempup1.y = tempup0.y;
-    tempup1.x = clamp(tempup1.x, 0, REGBMP_WIDTH);
-    tempup1.y = clamp(tempup1.y, 0, REGBMP_HEIGHT);
+    tempup1.x = static_cast<LONG>(clamp(tempup1.x, 0, REGBMP_WIDTH));
+    tempup1.y = static_cast<LONG>(clamp(tempup1.y, 0, REGBMP_HEIGHT));
 
     tempup2.x = 0;
     tempup2.y = tempup0.y;
-    tempup2.x = clamp(tempup2.x, 0, REGBMP_WIDTH);
-    tempup2.y = clamp(tempup2.y, 0, REGBMP_HEIGHT);
+    tempup2.x = static_cast<LONG>(clamp(tempup2.x, 0, REGBMP_WIDTH));
+    tempup2.y = static_cast<LONG>(clamp(tempup2.y, 0, REGBMP_HEIGHT));
 
     tempdown0.x = aimpt.x - 70;
     tempdown0.y = 350; //向最右面顶球的姿态调整点
@@ -678,18 +678,18 @@ void AncestralCBP::movingshot3(int mode, CPoint aimpt, CFishAction &action,
             tempdown0.x = aimpt.x - 70;
         }
     }
-    tempdown0.x = clamp(tempdown0.x, 0, REGBMP_WIDTH);
-    tempdown0.y = clamp(tempdown0.y, 0, REGBMP_HEIGHT);
+    tempdown0.x = static_cast<LONG>(clamp(tempdown0.x, 0, REGBMP_WIDTH));
+    tempdown0.y = static_cast<LONG>(clamp(tempdown0.y, 0, REGBMP_HEIGHT));
 
     tempdown1.y = tempdown1.y;
     tempdown1.x = 720;
-    tempdown1.x = clamp(tempdown1.x, 0, REGBMP_WIDTH);
-    tempdown1.y = clamp(tempdown1.y, 0, REGBMP_HEIGHT);
+    tempdown1.x = static_cast<LONG>(clamp(tempdown1.x, 0, REGBMP_WIDTH));
+    tempdown1.y = static_cast<LONG>(clamp(tempdown1.y, 0, REGBMP_HEIGHT));
 
     tempdown2.y = tempdown1.y;
     tempdown2.x = 0;
-    tempdown2.x = clamp(tempdown2.x, 0, REGBMP_WIDTH);
-    tempdown2.y = clamp(tempdown2.y, 0, REGBMP_HEIGHT);
+    tempdown2.x = static_cast<LONG>(clamp(tempdown2.x, 0, REGBMP_WIDTH));
+    tempdown2.y = static_cast<LONG>(clamp(tempdown2.y, 0, REGBMP_HEIGHT));
 
     if (mode == 0) {
         if ((FishPt.x > aimpt.x + shopdistance && flag11 == 0 && flag12 == 0) ||
@@ -861,14 +861,14 @@ bool AncestralCBP::Strategy(RefArray<CFishAction> aAction,
     initdata(aChannel); //到具体的场地以后将范围扩大化
 
     //击球点初始化
-    shotpt0.x = aimpt.x - radius * cos(diraimpttodoor);
-    shotpt0.y = aimpt.y - radius * sin(diraimpttodoor);
+    shotpt0.x = static_cast<LONG>(aimpt.x - radius * cos(diraimpttodoor));
+    shotpt0.y = static_cast<LONG>(aimpt.y - radius * sin(diraimpttodoor));
 
-    shotpt1.x = aimpt.x - radius * cos(diraimpttodoor1);
-    shotpt1.y = aimpt.y - radius * sin(diraimpttodoor1);
+    shotpt1.x = static_cast<LONG>(aimpt.x - radius * cos(diraimpttodoor1));
+    shotpt1.y = static_cast<LONG>(aimpt.y - radius * sin(diraimpttodoor1));
 
-    shotpt3.x = aimpt.x - radius * cos(diraimpttodoor3);
-    shotpt3.y = aimpt.y - radius * sin(diraimpttodoor3);
+    shotpt3.x = static_cast<LONG>(aimpt.x - radius * cos(diraimpttodoor3));
+    shotpt3.y = static_cast<LONG>(aimpt.y - radius * sin(diraimpttodoor3));
     shotptup.y = aimpt.y + radius; //垂直向上顶球点
     shotptup.x = aimpt.x;
     shotptdown.y = aimpt.y - radius; //垂直向下顶球点
