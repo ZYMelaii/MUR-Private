@@ -1,10 +1,9 @@
 #include "cooperativeballpassing.h"
 #include <algorithm>
-#include <atltypes.h>
 #include <bitset>
 #include <corecrt_malloc.h>
 #include <float.h>
-#include <winbase.h>
+
 
 CooperativeBallPassing::CooperativeBallPassing(int width, int height, IplImage *image) :
     initialized_(false), width_(width), height_(height), image_(image), stage_(Phase::UnStaged) {

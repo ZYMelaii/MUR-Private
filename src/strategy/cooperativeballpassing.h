@@ -39,6 +39,7 @@ public:
 	 * @author zymelaii
 	 * @date 2022-07-05
 	 */
+
 	void stableHoverInstruct(CFishInfo &fish, CFishAction &action);
 
 	/**
