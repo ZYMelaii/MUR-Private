@@ -6,8 +6,8 @@
 #include <float.h>
 #include <winbase.h>
 
-CooperativeBallPassing::CooperativeBallPassing(int width, int height) :
-    initialized_(false), width_(width), height_(height) {
+CooperativeBallPassing::CooperativeBallPassing(int width, int height, IplImage *image) :
+    initialized_(false), width_(width), height_(height), image_(image) {
     /**
      * @note 相关信息初始皆被设定为可判定的无效量，下面给出数据无效的判定：
      *  fish_[*].centerPos() == CPoint(CFishInfo::nil, CFishInfo::nil)
@@ -40,6 +40,24 @@ void CooperativeBallPassing::bevelMove(const CPoint &goal, CFishInfo &fish, CFis
     // TODO
 
     action.direction = 9;
+}
+
+void CooperativeBallPassing::trivalMove(
+    const CPoint &goal, CFishInfo &fish, CFishAction &action, int speed_gear) {
+
+    const int r = 8;
+    for (int row = goal.y - r; row <= goal.y + r; ++row) {
+        for (int col = goal.x - r; col <= goal.x + r; ++col) {
+            auto data = reinterpret_cast<uint8_t*>(&image_->imageData[row * image_->widthStep + col * image_->nChannels]);
+            data[0] = 0x00;
+            data[1] = 0x00;
+            data[2] = 0xff;
+        }
+    }
+
+    fish.setTarget(goal, normalizeAngle(getVecAngle(fish.headerPos(), goal)));
+    action.speed = speed_gear == -1 ? action.speed : speed_gear;
+    spinP2PMove(fish.targetPos(), fish, action);
 }
 
 CooperativeBallPassing::Region CooperativeBallPassing::regionPredict(const CPoint &pos) const {
@@ -81,19 +99,14 @@ void CooperativeBallPassing::StageInstruct_1st(
      */
     if ((regionPredict(fish_a.headerPos()) & Region::Lower) || distance < threshold * 0.3) {
         auto goal = CPoint(door_center_[0].x, door_center_[0].y + height_ / 4);
+        trivalMove(goal, fish_a, action_a, 7);
+    } else if (distance < threshold) {
+        auto goal = CPoint(door_center_[0].x, door_center_[0].y - height_ / 6);
         fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
-        action_a.speed = 7;
-        spinP2PMove(fish_a.targetPos(), fish_a, action_a);
-    } else if (distance < threshold * 0.6) {
-        auto goal = door_center_[0];
-        fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
-        action_a.speed = 6;
-        spinP2PMove(fish_a.targetPos(), fish_a, action_a);
+        trivalMove(goal, fish_a, action_a, 6);
     } else {
-        auto goal = CPoint(door_center_[0].x - width_ / 7, door_center_[0].y - height_ / 6);
-        fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
-        action_a.speed = 5;
-        spinP2PMove(fish_a.targetPos(), fish_a, action_a);
+        auto goal = CPoint(door_center_[0].x - width_ / 7, door_center_[0].y - height_ / 4);
+        trivalMove(goal, fish_a, action_a, 5);
     }
 
     /**
@@ -119,20 +132,16 @@ void CooperativeBallPassing::StageInstruct_2nd(
             const auto goal = distance < threshold * 1.2 ?
                 CPoint(door_center_[1].x, door_center_[1].y - height_ * 2 / 6) :
                 CPoint(door_center_[1].x - width_ / 7, door_center_[1].y + height_ / 6);
-            fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
-            action_a.speed = 5;
-            spinP2PMove(goal, fish_a, action_a);
+            trivalMove(goal, fish_a, action_a, 5);
             break;
         }
         case Region::UM: [[fallthrough]];
         case Region::UR: {
             puts("[INFO] A鱼正在穿越二门，即将前往水池右上角待机");
             const auto distance = getDistance(fish_a.headerPos(), door_center_[1]);
-            if (distance > threshold) {
+            if (reg_1 == Region::UR && distance < threshold * 1.6 || distance > threshold) {
                 const auto goal = CPoint(width_, 0);
-                action_a.speed = 7;
-                fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
-                spinP2PMove(goal, fish_a, action_a);
+                trivalMove(goal, fish_a, action_a, 7);
             } else {
                 stableHoverInstruct(fish_a, action_a);
             }
@@ -144,9 +153,7 @@ void CooperativeBallPassing::StageInstruct_2nd(
             const auto goal = distance < threshold * 1.2 ?
                 CPoint(door_center_[1].x, door_center_[1].y - height_ * 2 / 6) :
                 CPoint(door_center_[1].x + width_ / 7, door_center_[1].y + height_ / 6);
-            fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
-            action_a.speed = 6;
-            spinP2PMove(goal, fish_a, action_a);
+            trivalMove(goal, fish_a, action_a, 6);
             break;
         }
         default: {
@@ -154,9 +161,7 @@ void CooperativeBallPassing::StageInstruct_2nd(
             const auto goal = CPoint(
                 static_cast<decltype(CPoint().x)>(door_center_[1].x * 0.9 + door_center_[0].x * 0.1),
                 static_cast<decltype(CPoint().y)>(door_center_[1].y * 0.9 + door_center_[0].y * 0.1));
-            fish_a.setTarget(goal, normalizeAngle(getVecAngle(fish_a.headerPos(), goal)));
-            action_a.speed = 8;
-            spinP2PMove(goal, fish_a, action_a);
+            trivalMove(goal, fish_a, action_a, 8);
         }
     }
 
@@ -192,9 +197,7 @@ void CooperativeBallPassing::StageInstruct_2nd(
          */
         puts("[INFO] B鱼正平行驱往二门");
         const auto goal = CPoint(door_center_[1].x, fish_b.headerPos().y);
-        fish_b.setTarget(goal, 0);
-        action_b.speed = 6;
-        spinP2PMove(goal, fish_b, action_b);
+        trivalMove(goal, fish_b, action_b, 6);
     }
 }
 
@@ -203,6 +206,22 @@ void CooperativeBallPassing::StageInstruct_3rd(
     CFishInfo &fish_b, CFishAction &action_b,
     CBallInfo &ball) {
     puts("[INFO] 正在执行第三阶段策略");
+
+    const auto threshold = getDistance(door_center_[0], CPoint(width_ / 7, height_ * 2 / 6));
+    auto region = regionPredict(fish_b.centerPos());
+
+    if (region & Region::Upper) {
+        puts("[INFO] B鱼正在穿越二门");
+        const auto distance = getDistance(fish_b.headerPos(), door_center_[1]);
+        const auto goal = CPoint(door_center_[1].x, distance > threshold * 0.25 ? door_center_[1].y : door_center_[2].y);
+        trivalMove(goal, fish_b, action_b, 5);
+    } else {
+        puts("[INFO] B鱼正在进攻二门");
+        const auto goal = door_center_[2];
+        trivalMove(goal, fish_b, action_b, 4);
+
+        // TODO
+    }
 }
 
 bool CooperativeBallPassing::Strategy(
@@ -211,6 +230,15 @@ bool CooperativeBallPassing::Strategy(
     RefArray<CBallInfo>   aBallinfo,
     RefArray<OBSTAINFO>   aObstacle,
     RefArray<CHANNEL>     aChannel) {
+
+    const auto threshold = getDistance(door_center_[0], CPoint(width_ / 7, height_ * 2 / 6));
+    for (int col = 0; col < threshold; ++col) {
+        auto data = reinterpret_cast<uint8_t*>(&image_->imageData[image_->widthStep * 36 + (col + 36) * image_->nChannels]);
+        data[0] = 0xff;
+        data[1] = 0x00;
+        data[2] = 0x00;
+    }
+
     /**
      * @note 未初始化完成，等待球门标定。
      */

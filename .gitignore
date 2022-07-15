@@ -46,4 +46,7 @@
 *.VC.db
 *.json
 *.suo
+
 complile_commands.json
+build/
+ws_ninja/

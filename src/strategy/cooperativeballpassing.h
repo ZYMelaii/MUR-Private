@@ -17,8 +17,9 @@ public:
 	 * @brief 默认构造，作必要的初始化
 	 * @param width 识别图像的宽度
 	 * @param height 识别图像的高度
+	 * @param image 原始图像（确保图像始终在该地址被读写）
 	 */
-	CooperativeBallPassing(int width, int height);
+	CooperativeBallPassing(int width, int height, IplImage *image);
 
 	/**
 	 * @brief 朴素水中协作顶球策略
@@ -50,6 +51,17 @@ public:
 	 * @date 2022-07-05
 	 */
 	void bevelMove(const CPoint &goal, CFishInfo &fish, CFishAction &action);
+
+	/**
+	 * @brief 普通对点移动指令
+	 * @param goal 目标点
+	 * @param fish 目标鱼
+	 * @param action 目标鱼的动作对象
+	 * @param speed_gear 速度挡位，不传参或参数为-1时使用原速度
+	 * @author zymelaii
+	 * @date 2022-07-14
+	 */
+	void trivalMove(const CPoint &goal, CFishInfo &fish, CFishAction &action, int speed_gear = -1);
 
 	/**
 	 * @brief 水池区域划分
@@ -168,6 +180,11 @@ private:
 	 * @brief 水池宽高
 	 */
 	int width_, height_;
+
+	/**
+	 * @brief 原始图像
+	 */
+	IplImage *image_;
 
 	/**
 	 * @brief 三个球门的中心位置

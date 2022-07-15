@@ -5,14 +5,16 @@
  */
 
 #include "./official/strategyhelper.h"
-
 #include "./strategy/smoothtargeting.h"
 #include "./strategy/cooperativeballpassing.h"
 
-
 static int g_enable_which = 1;
 
+#include <utility>
+
 BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
+    static auto CodePageTrigger = system("chcp 65001");
+
     clear();
 
     auto wrap = [&](CStrategy *self, bool deleteLater = false) {
@@ -24,10 +26,8 @@ BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObst
         };
     };
 
-    static auto strategy = new CooperativeBallPassing(OriginImage->width, OriginImage->height);
-
-    // wrap(new StatusViewer, true)();
-    // wrap(new TEST_Pt2Measure, true)();
+    static auto strategy = new CooperativeBallPassing(
+        OriginImage->width, OriginImage->height, OriginImage);
 
     switch (g_enable_which) {
         case 0:
@@ -41,26 +41,3 @@ BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObst
     }
 
 EndExport()
-
-// #include <iostream>
-// BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ulReasonForCall, LPVOID lpReserved) {
-//     switch (ulReasonForCall) {
-//         case DLL_PROCESS_ATTACH: {
-//             std::cout << "Load MURStrategy.dll as process" << std::endl;
-//             break;
-//         }
-//         case DLL_PROCESS_DETACH: {
-//             std::cout << "free MURStrategy.dll process" << std::endl;
-//             break;
-//         }
-//         case DLL_THREAD_ATTACH: {
-//             std::cout << "Load MURStrategy.dll as thread" << std::endl;
-//             break;
-//         }
-//         case DLL_THREAD_DETACH: {
-//             std::cout << "free MURStrategy.dll thread" << std::endl;
-//             break;
-//         }
-//     }
-//     return TRUE;
-// }
