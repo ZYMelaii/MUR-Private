@@ -93,8 +93,9 @@ protected:
 	 * @brief 策略阶段划分
 	 * @note 策略划分为三个小阶段策略执行，三个阶段由下列策略
 	 *  函数具体描述。
+	 * @note UnStaged 空状态
 	 */
-	enum class Phase { Stage_1st, Stage_2nd, Stage_3rd };
+	enum class Phase { UnStaged, Stage_1st, Stage_2nd, Stage_3rd };
 
 	/**
 	 * @brief 阶段预测
@@ -190,6 +191,11 @@ private:
 	 * @brief 三个球门的中心位置
 	 */
 	CPoint door_center_[3];
+
+	/**
+	 * @brief 当前执行策略
+	 */
+	Phase stage_;
 
 	const int index_[3] = {
 		0, /// A鱼索引

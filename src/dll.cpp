@@ -10,8 +10,6 @@
 
 static int g_enable_which = 1;
 
-#include <utility>
-
 BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
     static auto CodePageTrigger = system("chcp 65001");
 

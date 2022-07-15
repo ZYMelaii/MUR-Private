@@ -8,6 +8,7 @@ CStrategy::CStrategy() :
     // PASS
 }
 
+
 CStrategy::~CStrategy() {
     // PASS
 }

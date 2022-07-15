@@ -7,7 +7,7 @@
 #include <winbase.h>
 
 CooperativeBallPassing::CooperativeBallPassing(int width, int height, IplImage *image) :
-    initialized_(false), width_(width), height_(height), image_(image) {
+    initialized_(false), width_(width), height_(height), image_(image), stage_(Phase::UnStaged) {
     /**
      * @note 相关信息初始皆被设定为可判定的无效量，下面给出数据无效的判定：
      *  fish_[*].centerPos() == CPoint(CFishInfo::nil, CFishInfo::nil)
@@ -25,7 +25,7 @@ void CooperativeBallPassing::stableHoverInstruct(CFishInfo &fish, CFishAction &a
 }
 
 void CooperativeBallPassing::bevelMove(const CPoint &goal, CFishInfo &fish, CFishAction &action) {
-    //! 默认先按在运动方向左侧处理
+    // ! 默认先按在运动方向左侧处理
     const auto delta = normalizeAngle(
         getVecAngle(fish.centerPos(), fish.headerPos()) -
         getVecAngle(fish.centerPos(), goal)) / M_PI * 180;
@@ -69,6 +69,7 @@ CooperativeBallPassing::Region CooperativeBallPassing::regionPredict(const CPoin
 
 CooperativeBallPassing::Phase CooperativeBallPassing::phasePredict(
     const CPoint &a_pos, const CPoint &b_pos, const CPoint &ball_pos) const {
+
     const auto reg_1 = regionPredict(a_pos);
     const auto reg_2 = regionPredict(b_pos);
 
@@ -232,13 +233,6 @@ bool CooperativeBallPassing::Strategy(
     RefArray<CHANNEL>     aChannel) {
 
     const auto threshold = getDistance(door_center_[0], CPoint(width_ / 7, height_ * 2 / 6));
-    for (int col = 0; col < threshold; ++col) {
-        auto data = reinterpret_cast<uint8_t*>(&image_->imageData[image_->widthStep * 36 + (col + 36) * image_->nChannels]);
-        data[0] = 0xff;
-        data[1] = 0x00;
-        data[2] = 0x00;
-    }
-
     /**
      * @note 未初始化完成，等待球门标定。
      */
