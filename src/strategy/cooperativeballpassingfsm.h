@@ -7,7 +7,13 @@
 
 #include "../official/strategyhelper.h"
 #include <functional>
+#include <initializer_list>
+#include <list>
+#include <map>
+#include <optional>
+#include <unordered_map>
 #include <utility>
+
 
 /**
  * @brief 基于状态机运行的水中协作顶球策略类
@@ -23,11 +29,11 @@ public:
 	struct Fish {
 		/**
 		 * @brief 重置绑定关系
-		 * @param targetFish 待绑定的鱼对象
-		 * @param targetAction 待绑定的鱼对象对应的动作对象
+		 * @param target_fish 待绑定的鱼对象
+		 * @param target_action 待绑定的鱼对象对应的动作对象
 		 * @return 当前鱼对象
 		 */
-		Fish& reset(CFishInfo* targetFish, CFishAction* targetAction);
+		Fish& reset(CFishInfo* target_fish, CFishAction* target_action);
 
 		//! \defgroup CooperativeBallPassingFSM鱼类预设动作
 		//! @{
@@ -65,9 +71,10 @@ public:
 public:
 	/**
 	 * @brief 策略入口
-	 * @param aAction 鱼动作列表
-	 * @param aFish 鱼列表
-	 * @param aBallinfo 水球列表
+	 * @param aAction 鱼动作列表（长度不可信赖）
+	 * @param aFish 鱼列表（长度不可信赖）
+	 * @param aBallinfo 水球列表（长度不可信赖）
+	 * @param aObstacle 障碍物列表（长度不可信赖）
 	 * @param aChannel 通道列表
 	 * @return 策略是否被成功调用（该值被忽略）
 	 * @attention 调用该策略之前，务必先调用updateVisualFrame。
@@ -98,6 +105,27 @@ public:
 		LM	   = Lower | Middle, /*!< 中下区域 */
 		LR	   = Lower | Right,	 /*!< 右下区域 */
 	};
+
+	/**
+	 * @brief 策略核，策略运行的基础单元
+	 * @details 策略核以当前策略对象为参数，运行返回值由核的具体含义指定。
+	 */
+	using PolicyKernel = std::function<bool(CooperativeBallPassingFSM*)>;
+
+	/**
+	 * @brief 策略约束
+	 * @details 策略约束是策略行为的约束，指明了策略的准入与准出情形。
+	 * 准入情形指明了策略在何种情形下被启动运行，而准出情形定义了策略执行完毕的标志。
+	 * 当准入情形通过时，策略对象应尽可能转向启动该策略。
+	 * 当准出情形通过时，策略对象必须将策略流程传递至下一策略。
+	 */
+	using PolicyConstraint = std::pair<PolicyKernel, PolicyKernel>;
+
+	/**
+	 * @brief 策略类型
+	 * @details 策略类型是策略行为与策略约束的集合，是独立的模块。
+	 */
+	using Policy = std::pair<PolicyKernel, PolicyConstraint>;
 
 	/**
 	 * @brief 策略阶段枚举值（自动机状态定义）
@@ -132,6 +160,52 @@ public:
 	bool updateVisualFrame(IplImage* image);
 
 	/**
+	 * @brief 场景刷新
+	 * @details 完成相关变量的配置与更新，需要在updateVisualFrame之后，
+	 * Strategy之前执行。
+	 * @param aAction 鱼动作列表（长度不可信赖）
+	 * @param aFish 鱼列表（长度不可信赖）
+	 * @param aBallinfo 水球列表（长度不可信赖）
+	 * @param aObstacle 障碍物列表（长度不可信赖）
+	 * @param aChannel 通道列表
+	 * @param wait_for_track 是否等待视觉追踪完全，若不等待将直接返回真；
+	 * 否则当前追踪丢失，直接返回假。
+	 * @return 是否刷新成功
+	 * @note 当通道标定不全时（强制性要求三通道），函数始终返回假。
+	 * @attention 刷新失败时，应尽可能取消调用当前轮次策略。
+	 */
+	bool refreshScene(RefArray<CFishAction> aAction, RefArray<CFishInfo> aFish,
+					  RefArray<CBallInfo> aBallinfo, RefArray<OBSTAINFO> aObstacle,
+					  RefArray<CHANNEL> aChannel, bool wait_for_track = true);
+
+	/**
+	 * @brief 空策略核，始终返回真。
+	 */
+	static bool null_policy(CooperativeBallPassingFSM*) { return true; }
+
+	/**
+	 * @brief 注册策略
+	 * @param name 待注册的策略名
+	 * @param action 策略行为
+	 * @param in_constraint 准入策略约束
+	 * @param out_constraint 准出策略约束
+	 * @return 已注册的策略
+	 * @retval std::nullopt 策略名冲突
+	 */
+	std::optional<Policy> registerPolicy(std::string name, PolicyKernel action,
+										 PolicyKernel in_constraint, PolicyKernel out_constraint);
+
+	/**
+	 * @brief 配置策略
+	 * @param src_policy 源策略
+	 * @param dst_policies 后继策略列表（不存在的策略将被忽略）
+	 * @return 配置是否成功
+	 * @retval false 源策略不存在
+	 */
+	bool configurePolicy(std::string src_policy, std::initializer_list<std::string> dst_policies);
+
+public:
+	/**
 	 * @brief 获取门中心坐标
 	 * @param index 门的标号（0/1/2分别顺序对应三个门）
 	 * @return 指定标号门的中心坐标
@@ -151,6 +225,12 @@ public:
 	 */
 	const CBallInfo& ball() const;
 
+	/**
+	 * @brief 获取常量表
+	 * @return 当前帧常量表
+	 */
+	const auto& constants() const;
+
 private:
 	/*! @brief 目标球门中心坐标 */
 	CPoint door_center_[3];
@@ -163,4 +243,22 @@ private:
 
 	/*! @brief 当前帧视觉图像 */
 	IplImage* visframe_;
+
+	/*! @brief 字符串-策略编码转换表 */
+	std::unordered_map<std::string, int> simap_;
+
+	/*! @brief 策略表 */
+	std::map<int, Policy> policies_;
+
+	/*! @brief 策略状态转移图 */
+	std::map<int, std::list<int>> std_;
+
+	/*! @brief 常量表 */
+	struct {
+		int width;	/*!< 场地宽度 */
+		int height; /*!< 场地高度 */
+		struct {
+
+		} dist; /*!< 距离常量 */
+	} constants_;
 };
