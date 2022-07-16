@@ -128,25 +128,11 @@ public:
 	using Policy = std::pair<PolicyKernel, PolicyConstraint>;
 
 	/**
-	 * @brief 策略阶段枚举值（自动机状态定义）
-	 */
-	enum class Phase {
-		Origin /*!< 初始起点（空状态） */
-	};
-
-	/**
 	 * @brief 区域判定
 	 * @param pos 待判定的点位
 	 * @return 所属区域枚举值
 	 */
 	Region regionPredict(const CPoint& pos) const;
-
-	/**
-	 * @brief 阶段预测
-	 * @return 当前所处的策略阶段
-	 * @attention 具体执行的策略将依据该方法进行分发调用
-	 */
-	Phase phasePredict(const CPoint& a_pos, const CPoint& b_pos, const CPoint& ball_pos) const;
 
 	/**
 	 * @brief 更新视觉帧
