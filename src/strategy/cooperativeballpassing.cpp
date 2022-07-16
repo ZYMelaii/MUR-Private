@@ -1,12 +1,12 @@
 #include "cooperativeballpassing.h"
 #include <algorithm>
 #include <bitset>
-#include <corecrt_malloc.h>
+#include <malloc.h>
 #include <float.h>
 
 
-CooperativeBallPassing::CooperativeBallPassing(int width, int height, IplImage *image) :
-    initialized_(false), width_(width), height_(height), image_(image), stage_(Phase::UnStaged) {
+CooperativeBallPassing::CooperativeBallPassing(int width, int height) :
+    initialized_(false), width_(width), height_(height), image_(nullptr), stage_(Phase::UnStaged) {
     /**
      * @note 相关信息初始皆被设定为可判定的无效量，下面给出数据无效的判定：
      *  fish_[*].centerPos() == CPoint(CFishInfo::nil, CFishInfo::nil)
@@ -64,6 +64,10 @@ CooperativeBallPassing::Region CooperativeBallPassing::regionPredict(const CPoin
     flag |= pos.y <= height_ / 2 ? Region::Upper : Region::Lower;
     flag |= pos.x <= width_ / 3 ? Region::Left : (pos.x >= width_ * 2 / 3 ? Region::Right : Region::Middle);
     return static_cast<Region>(flag);
+}
+
+void CooperativeBallPassing::installImage(IplImage *image) {
+    image_ = image;
 }
 
 CooperativeBallPassing::Phase CooperativeBallPassing::phasePredict(

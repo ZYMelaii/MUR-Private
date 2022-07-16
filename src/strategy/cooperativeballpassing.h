@@ -17,9 +17,8 @@ public:
 	 * @brief 默认构造，作必要的初始化
 	 * @param width 识别图像的宽度
 	 * @param height 识别图像的高度
-	 * @param image 原始图像（确保图像始终在该地址被读写）
 	 */
-	CooperativeBallPassing(int width, int height, IplImage *image);
+	CooperativeBallPassing(int width, int height);
 
 	/**
 	 * @brief 朴素水中协作顶球策略
@@ -88,6 +87,11 @@ public:
 	 * @return 所属区域的Region标志
 	 */
 	Region regionPredict(const CPoint &pos) const;
+
+	/**
+	 * @brief 加载原始图像
+	 */
+	void installImage(IplImage *image);
 
 protected:
 	/**

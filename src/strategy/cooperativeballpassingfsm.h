@@ -11,6 +11,8 @@
 #include <list>
 #include <map>
 #include <optional>
+#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 
@@ -35,8 +37,19 @@ public:
 		 */
 		Fish& reset(CFishInfo* target_fish, CFishAction* target_action);
 
+		/**
+		 * @brief 重定向指针成员访问到CFishInfo
+		 */
+		CFishInfo* operator->();
+
 		//! \defgroup CooperativeBallPassingFSM鱼类预设动作
 		//! @{
+		/**
+		 * @brief 平缓回正直行
+		 * @param speed_gear 速度档位（-1表示使用原速度）
+		 */
+		void  goStraight(int speed_gear = -1);
+
 		/**
 		 * @brief 通用点对点移动
 		 * @param goal 目标点
@@ -44,7 +57,7 @@ public:
 		 * @note 指令内核为CStrategy基类的spinP2PMove函数，该方法从综合调参的方法得到，
 		 * 故而对一些特殊情形，该指令的执行结果可能远低于期望。对于特殊情形，请酌情特殊化处理。
 		 */
-		void trivalMove(const CPoint& goal, int speed_gear);
+		void trivalMove(const CPoint& goal, int speed_gear = -1);
 
 		/**
 		 * @brief 原地稳定悬停
@@ -118,6 +131,7 @@ public:
 	 * 准入情形指明了策略在何种情形下被启动运行，而准出情形定义了策略执行完毕的标志。
 	 * 当准入情形通过时，策略对象应尽可能转向启动该策略。
 	 * 当准出情形通过时，策略对象必须将策略流程传递至下一策略。
+	 * @note 约束的策略核应当只对策略对象进行读操作
 	 */
 	using PolicyConstraint = std::pair<PolicyKernel, PolicyKernel>;
 
@@ -167,7 +181,7 @@ public:
 	/**
 	 * @brief 空策略核，始终返回真。
 	 */
-	static bool null_policy(CooperativeBallPassingFSM*) { return true; }
+	static bool nullpolicy(CooperativeBallPassingFSM*) { return true; }
 
 	/**
 	 * @brief 注册策略
@@ -178,8 +192,9 @@ public:
 	 * @return 已注册的策略
 	 * @retval std::nullopt 策略名冲突
 	 */
-	std::optional<Policy> registerPolicy(std::string name, PolicyKernel action,
-										 PolicyKernel in_constraint, PolicyKernel out_constraint);
+	auto registerPolicy(const std::string& name, PolicyKernel action = nullpolicy,
+						PolicyKernel in_constraint	= nullpolicy,
+						PolicyKernel out_constraint = nullpolicy) -> std::optional<Policy>;
 
 	/**
 	 * @brief 配置策略
@@ -188,7 +203,61 @@ public:
 	 * @return 配置是否成功
 	 * @retval false 源策略不存在
 	 */
-	bool configurePolicy(std::string src_policy, std::initializer_list<std::string> dst_policies);
+	bool configurePolicy(const std::string&					src_policy,
+						 std::initializer_list<std::string> dst_policies);
+
+	/**
+	 * @brief 强制设置为目标策略
+	 * @return 是否成功设置
+	 * @retval false 目标策略不存在
+	 * @attention 非必要不要使用该函数，否则可能导致状态转移失控。
+	 */
+	bool forceSetPolicy(const std::string& policy);
+
+	/**
+	 * @brief 以三元组形式获取目标策略
+	 * @param policyid 目标策略编码
+	 * @attention 方法未检查策略编码是否有效，调用时务必保证目标策略存在！
+	 */
+	auto getUnpackPolicy(int policyid) const
+		-> std::tuple<PolicyKernel, PolicyKernel, PolicyKernel>;
+
+private:
+	/*! @brief 目标球门中心坐标 */
+	CPoint door_center_[3];
+
+	/*! @brief 当前帧鱼实例 */
+	Fish fishes_[2];
+
+	/*! @brief 当前帧水球对象 */
+	CBallInfo* ball_;
+
+	/*! @brief 当前帧视觉图像 */
+	IplImage* visframe_;
+
+	/*! @brief 字符串-策略编码转换表 */
+	std::unordered_map<std::string, int> simap_;
+
+	/*! @brief 策略表 */
+	std::map<int, Policy> policies_;
+
+	/*! @brief 策略状态转移图 */
+	std::map<int, std::list<int>> std_;
+
+	/*! @brief 当前策略编号 */
+	int policyid_;
+
+	/*! @brief 常量表 */
+	struct {
+		int width;	/*!< 场地宽度 */
+		int height; /*!< 场地高度 */
+		struct {
+			int half;	 /*!< 二分之一标准 */
+			int third;	 /*!< 三分之一标准 */
+			int quarter; /*!< 四分之一标准 */
+		} x, y;
+		CPoint centers[6]; /*!< 门一、门二、纵轴中线划分出的六个区域的中心点坐标 */
+	} constants_;
 
 public:
 	/**
@@ -215,36 +284,5 @@ public:
 	 * @brief 获取常量表
 	 * @return 当前帧常量表
 	 */
-	const auto& constants() const;
-
-private:
-	/*! @brief 目标球门中心坐标 */
-	CPoint door_center_[3];
-
-	/*! @brief 当前帧鱼实例 */
-	Fish fishes_[2];
-
-	/*! @brief 当前帧水球对象 */
-	CBallInfo* ball_;
-
-	/*! @brief 当前帧视觉图像 */
-	IplImage* visframe_;
-
-	/*! @brief 字符串-策略编码转换表 */
-	std::unordered_map<std::string, int> simap_;
-
-	/*! @brief 策略表 */
-	std::map<int, Policy> policies_;
-
-	/*! @brief 策略状态转移图 */
-	std::map<int, std::list<int>> std_;
-
-	/*! @brief 常量表 */
-	struct {
-		int width;	/*!< 场地宽度 */
-		int height; /*!< 场地高度 */
-		struct {
-
-		} dist; /*!< 距离常量 */
-	} constants_;
+	auto constants() const -> decltype(constants_);
 };

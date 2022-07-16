@@ -4,38 +4,35 @@
  * @date 2022-06-29
  */
 
-#include "./official/strategyhelper.h"
-#include "./strategy/smoothtargeting.h"
-#include "./strategy/cooperativeballpassing.h"
 
-static int g_enable_which = 1;
+
+#if 1
+#include "./strategy/cooperativeballpassingfsm.h"
+
+CooperativeBallPassingFSM strategy;
 
 BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
+    //! 清屏
     static auto CodePageTrigger = system("chcp 65001");
-
     clear();
 
-    auto wrap = [&](CStrategy *self, bool deleteLater = false) {
-        return [&, self, deleteLater] {
-            self->Strategy(aAction, aFish, aBallinfo, aObstacle, aChannel);
-            if (deleteLater) {
-                delete self;
-            }
-        };
-    };
-
-    static auto strategy = new CooperativeBallPassing(
-        OriginImage->width, OriginImage->height, OriginImage);
-
-    switch (g_enable_which) {
-        case 0:
-            puts("[INFO] 当前策略：SmoothTargeting");
-            wrap(new LittleLittleFishDashTargetBallToDeathAndSlowDownSmoothlyAsDoveStrategy, true)();
-        break;
-        case 1:
-            puts("[INFO] 当前策略：CooperativeBallPassing");
-            wrap(strategy)();
-        break;
+    //! 策略运行
+    strategy.updateVisualFrame(OriginImage);
+    if (bool ignore = strategy.refreshScene(aAction, aFish, aBallinfo, aObstacle, aChannel); !ignore) {
+        strategy.Strategy(aAction, aFish, aBallinfo, aObstacle, aChannel);
     }
-
 EndExport()
+#else
+
+#include "./strategy/cooperativeballpassing.h"
+BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
+    //! 清屏
+    static auto CodePageTrigger = system("chcp 65001");
+    clear();
+
+    //! 策略运行
+    static CooperativeBallPassing strategy(OriginImage->width, OriginImage->height);
+    strategy.Strategy(aAction, aFish, aBallinfo, aObstacle, aChannel);
+EndExport()
+
+#endif
