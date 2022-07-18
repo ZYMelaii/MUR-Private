@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <memory>
 #include <optional>
+#include <winuser.h>
 
 auto CooperativeBallPassingFSM::Fish::reset(CFishInfo* target_fish, CFishAction* target_action)
 	-> Fish& {
@@ -65,19 +66,22 @@ bool CooperativeBallPassingFSM::Strategy(RefArray<CFishAction> aAction, RefArray
 	}
 
 	//! 标定目标点
-	int r = 8;
-	for (int i = 0; i <= 1; ++i) {
-		const auto goal = fish(i)->targetPos();
-		for (int row = goal.y - r; row <= goal.y + r; ++row) {
-			for (int col = goal.x - r; col <= goal.x + r; ++col) {
-				auto data = reinterpret_cast<uint8_t*>(
-					&visframe_->imageData[row * visframe_->widthStep + col * visframe_->nChannels]);
-				data[0] = !!i ? 0x00 : 0xff;
-				data[1] = 0x00;
-				data[2] = !!i ? 0xff : 0x00;
-			}
-		}
-	}
+	// int r = 8;
+	// for (int i = 0; i <= 1; ++i) {
+	// 	const auto goal = fish(i)->targetPos();
+	// 	for (int row = goal.y - r; row <= goal.y + r; ++row) {
+	// 		for (int col = goal.x - r; col <= goal.x + r; ++col) {
+	// 			if (!(row >= 0 && row < visframe_->height && col >= 0 && col < visframe_->width)) {
+	// 				continue;
+	// 			}
+	// 			auto data = reinterpret_cast<uint8_t*>(
+	// 				&visframe_->imageData[row * visframe_->widthStep + col * visframe_->nChannels]);
+	// 			data[0] = !!i ? 0x00 : 0xff;
+	// 			data[1] = 0x00;
+	// 			data[2] = !!i ? 0xff : 0x00;
+	// 		}
+	// 	}
+	// }
 
 	return result;
 }
@@ -153,12 +157,86 @@ CooperativeBallPassingFSM::CooperativeBallPassingFSM() noexcept {
 			return p1.x >= p2.x && p1.y < p2.y;
 		});
 
+	registerPolicy(
+		"B -> door[0] (1)",
+		[](CooperativeBallPassingFSM* self) {
+			std::cout << "Strategy: B -> door[0] (1)\n" << std::flush;
+			self->fish(0).trivalMove(CPoint(self->constants().width, 0), 10);
+			self->fish(1).trivalMove(self->constants().centers[4], 7);
+			return true;
+		},
+		nullpolicy,
+		[](CooperativeBallPassingFSM* self) {
+			return self->fish(1)->headerPos().x > self->constants().x.half;
+		});
+
+	registerPolicy(
+		"B -> door[0] (2)",
+		[](CooperativeBallPassingFSM* self) {
+			std::cout << "Strategy: B -> door[0] (2)\n" << std::flush;
+			self->fish(0).goStraight();
+			self->fish(1).trivalMove(
+				CPoint(self->door(0).x, self->door(0).y - self->constants().y.quarter), 7);
+			return true;
+		},
+		nullpolicy,
+		[](CooperativeBallPassingFSM* self) {
+			return self->fish(1)->centerPos().y < self->constants().y.third;
+		});
+
+	registerPolicy(
+		"B -> door[1] (1)",
+		[](CooperativeBallPassingFSM* self) {
+			std::cout << "Strategy: B -> door[1] (1)\n" << std::flush;
+			self->fish(1).trivalMove(self->constants().centers[2], 5);
+			return true;
+		},
+		nullpolicy,
+		[](CooperativeBallPassingFSM* self) {
+			return self->fish(1)->headerPos().x > self->door(2).x;
+		});
+
+	registerPolicy(
+		"B -> door[1] (2)",
+		[](CooperativeBallPassingFSM* self) {
+			std::cout << "Strategy: B -> door[1] (2)\n" << std::flush;
+			if (self->fish(1)->headerPos().y < self->door(1).y) {
+				self->fish(1).trivalMove(self->door(1), 7);
+			} else {
+				self->fish(1).goStraight(4);
+			}
+			return true;
+		},
+		nullpolicy,
+		[](CooperativeBallPassingFSM* self) {
+			return self->fish(1)->centerPos().x > self->door(2).x;
+		});
+
+	registerPolicy(
+		"B Throw Self To Goal",
+		[](CooperativeBallPassingFSM* self) {
+			std::cout << "Strategy: B Throw Self To Goal\n" << std::flush;
+			if (auto &fish = self->fish(1); fish->headerPos().x < self->door(2).x) {
+				fish.trivalMove(self->door(2), 6);
+			} else {
+				fish.goStraight(10);
+			}
+			return true;
+		},
+		nullpolicy,
+		[](CooperativeBallPassingFSM* self) { return false; });
+
 	//! TODO: 在此处注册策略
 
 	configurePolicy("Hover", {"A -> door[0] (1)"});
 	configurePolicy("A -> door[0] (1)", {"A -> door[0] (2)"});
 	configurePolicy("A -> door[0] (2)", {"A -> door[1] (1)"});
 	configurePolicy("A -> door[1] (1)", {"A -> door[1] (2)"});
+	configurePolicy("A -> door[1] (2)", {"B -> door[0] (1)"});
+	configurePolicy("B -> door[0] (1)", {"B -> door[0] (2)"});
+	configurePolicy("B -> door[0] (2)", {"B -> door[1] (1)"});
+	configurePolicy("B -> door[1] (1)", {"B -> door[1] (2)"});
+	configurePolicy("B -> door[1] (2)", {"B Throw Self To Goal"});
 
 	//! TODO: 在此处配置策略
 
@@ -257,7 +335,8 @@ auto CooperativeBallPassingFSM::registerPolicy(const std::string& name, PolicyKe
 	Policy			 policy(action, std::move(constraint));
 
 	//! 注册策略
-	int policyid = simap_.insert({name, (int)simap_.size()}).second;
+	const auto& [it, succeed] = simap_.insert({name, (int)simap_.size()});
+	int policyid = it->second;
 	policies_.insert({policyid, policy});
 	return {policy};
 }

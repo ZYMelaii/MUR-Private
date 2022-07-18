@@ -4,17 +4,14 @@
  * @date 2022-06-29
  */
 
-
-
 #if 1
 #include "./strategy/cooperativeballpassingfsm.h"
-
-CooperativeBallPassingFSM strategy;
 
 BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
     //! 清屏
     static auto CodePageTrigger = system("chcp 65001");
-    clear();
+    // clear();
+    static CooperativeBallPassingFSM strategy;
 
     //! 策略运行
     strategy.updateVisualFrame(OriginImage);
@@ -23,7 +20,6 @@ BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObst
     }
 EndExport()
 #else
-
 #include "./strategy/cooperativeballpassing.h"
 BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObstacle, aChannel)
     //! 清屏
@@ -34,5 +30,4 @@ BeginExportMURStrategy(OriginImage, RecogImage, aAction, aFish, aBallinfo, aObst
     static CooperativeBallPassing strategy(OriginImage->width, OriginImage->height);
     strategy.Strategy(aAction, aFish, aBallinfo, aObstacle, aChannel);
 EndExport()
-
 #endif

@@ -263,6 +263,7 @@ bool CooperativeBallPassing::Strategy(
         case Phase::Stage_3rd:
             StageInstruct_3rd(fish_a, action_a, fish_b, action_b, ball);
         break;
+        default: break;
     }
 
     return true;

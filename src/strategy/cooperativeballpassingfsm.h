@@ -16,7 +16,6 @@
 #include <unordered_map>
 #include <utility>
 
-
 /**
  * @brief 基于状态机运行的水中协作顶球策略类
  * @note 该策略引入了视觉图像信息以便于鱼的调试，同时其将充分利用图像信息，进行场地的定位等操作。
@@ -48,7 +47,7 @@ public:
 		 * @brief 平缓回正直行
 		 * @param speed_gear 速度档位（-1表示使用原速度）
 		 */
-		void  goStraight(int speed_gear = -1);
+		void goStraight(int speed_gear = -1);
 
 		/**
 		 * @brief 通用点对点移动
