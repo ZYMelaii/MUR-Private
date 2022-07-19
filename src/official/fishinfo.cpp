@@ -113,8 +113,8 @@ double CFishInfo::directionToTarget(bool correct) const {
 
     double result = normalizeAngle(m_fdirection - getVecAngle(m_fCenterP, m_fTargetPos));
 
-    return result + (!correct || m_fLastAction.direction == 4) ? 0 :
-        (m_fLastAction.direction > 4 ? 1 : -1) * M_PI / 18;
+    return result + ((!correct || m_fLastAction.direction == 4) ? 0 :
+        (m_fLastAction.direction > 4 ? 1 : -1) * M_PI / 18);
 }
 
 /**

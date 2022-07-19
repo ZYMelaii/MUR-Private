@@ -23,8 +23,9 @@ int main(int argc, char* argv[]) {
 	//! execute strategy
 #define MURArgs {action, 16}, {fish, 16}, {ball, 16}, {obstacle, 16}, {channel, 3}
 	strategy.updateVisualFrame(&origin);
-	strategy.refreshScene(MURArgs);
-	strategy.Strategy(MURArgs);
+	if (bool ok = strategy.refreshScene(MURArgs); ok) {
+		strategy.Strategy(MURArgs);
+	}
 #undef MURArgs
 
 	//! cleanup
